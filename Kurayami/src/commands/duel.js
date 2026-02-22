@@ -4,6 +4,7 @@ const { errorEmbed, getColor } = require('../utils/embedBuilder');
 const { applyEffects, processDotsAndStatuses, isSkipping, buildFighterState } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
+const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
 
 const RACE_SKILLS = require('../data/race_skills.json');
 
@@ -157,11 +158,12 @@ module.exports = {
         const inviteCollector = inviteMsg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === target.id, max: 1 });
 
         inviteCollector.on('collect', async (inv) => {
-            await inv.deferUpdate();
-            if (inv.customId === 'duel:decline') {
-                await inviteMsg.edit({ embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription(`❌ ${target.displayName} düelloyu reddetti.`)], components: [] });
-                return;
-            }
+            await safeDeferUpdate(inv);
+            try {
+                if (inv.customId === 'duel:decline') {
+                    await inviteMsg.edit({ embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription(`❌ ${target.displayName} düelloyu reddetti.`)], components: [] });
+                    return;
+                }
 
             // Savaş başlat
             challenger.inBattle = true;
@@ -190,16 +192,15 @@ module.exports = {
             const duelCollector = duelMsg.createMessageComponentCollector({ time: 180000 });
 
             duelCollector.on('collect', async (btn) => {
-                const isF1Turn = currentTurn === 'f1';
-                const expectedUser = isF1Turn ? message.author.id : target.id;
+                await safeDeferUpdate(btn);
+                try {
+                    const isF1Turn = currentTurn === 'f1';
+                    const expectedUser = isF1Turn ? message.author.id : target.id;
 
-                // Yanlış kullanıcı — önce deferUpdate, sonra followUp
-                if (btn.user.id !== expectedUser) {
-                    await btn.deferUpdate().catch(() => { });
-                    await btn.followUp({ content: '⏳ Senin turun değil!', ephemeral: true }).catch(() => { });
-                    return;
-                }
-                await btn.deferUpdate();
+                    if (btn.user.id !== expectedUser) {
+                        await safeReply(btn, '⏳ Senin turun değil!');
+                        return;
+                    }
 
                 const prefix = isF1Turn ? 'duel1' : 'duel2';
 
@@ -335,10 +336,20 @@ module.exports = {
                 const nextSkills = currentTurn === 'f1' ? skills1 : skills2;
                 const nextCd = currentTurn === 'f1' ? cd1 : cd2;
 
-                await duelMsg.edit({
-                    embeds: [buildDuelEmbed(f1, f2, `${log}\n\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
-                    components: buildButtons(currentTurn, nextSkills, nextCd)
-                });
+                    await duelMsg.edit({
+                        embeds: [buildDuelEmbed(f1, f2, `${log}\n\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
+                        components: buildButtons(currentTurn, nextSkills, nextCd)
+                    });
+                } catch (err) {
+                    console.error('Duel interaction error:', err);
+                    challenger.inBattle = false;
+                    defender.inBattle = false;
+                    await challenger.save().catch(() => { });
+                    await defender.save().catch(() => { });
+                    await safeReply(btn, '❌ İşlem sırasında hata oluştu. Lütfen tekrar dene.');
+                    duelMsg.edit({ components: [] }).catch(() => { });
+                    duelCollector.stop('error');
+                }
             });
 
             duelCollector.on('end', async (_, reason) => {
@@ -350,6 +361,11 @@ module.exports = {
                     duelMsg.edit({ components: [] }).catch(() => { });
                 }
             });
+            } catch (err) {
+                console.error('Duel invite interaction error:', err);
+                await safeReply(inv, '❌ İşlem sırasında hata oluştu. Lütfen tekrar dene.');
+                inviteCollector.stop('error');
+            }
         });
 
         inviteCollector.on('end', async (_, reason) => {

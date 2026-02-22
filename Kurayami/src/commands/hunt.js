@@ -6,6 +6,7 @@ const { calcDamage, applyEffects, processDotsAndStatuses, isSkipping, buildFight
 const { addExp } = require('../utils/levelSystem');
 const { rollNpcDrop } = require('../utils/dropSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
+const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
 
 const RACE_SKILLS = require('../data/race_skills.json');
 
@@ -129,9 +130,9 @@ module.exports = {
         });
 
         collector.on('collect', async (i) => {
-            await i.deferUpdate();
-
-            let actionLog = '';
+            await safeDeferUpdate(i);
+            try {
+                let actionLog = '';
 
             if (i.customId === 'hunt:flee') {
                 const fled = Math.random() < 0.5;
@@ -267,14 +268,22 @@ module.exports = {
                 { name: `${npc.emoji} ${npc.name}`, hp: enemy.hp, maxHp: enemy.maxHp },
                 actionLog, turn, color
             );
-            await msg.edit({ embeds: [newEmbed], components: buildButtons() });
+                await msg.edit({ embeds: [newEmbed], components: buildButtons() });
+            } catch (err) {
+                console.error('Hunt interaction error:', err);
+                player.inBattle = false;
+                await player.save().catch(() => { });
+                await safeReply(i, '❌ İşlem sırasında hata oluştu. Lütfen tekrar dene.');
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
+                collector.stop('error');
+            }
         });
 
         collector.on('end', async (_, reason) => {
             if (!['win', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();
-                msg.edit({ components: [] }).catch(() => { });
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
             }
         });
     }

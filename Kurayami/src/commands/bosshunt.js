@@ -5,6 +5,7 @@ const { errorEmbed, combatEmbed, getColor } = require('../utils/embedBuilder');
 const { calcDamage, applyEffects, processDotsAndStatuses, isSkipping, buildFighterState } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
+const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
 
 const BOSSES_DATA = require('../data/bosses.json');
 
@@ -122,8 +123,9 @@ module.exports = {
         });
 
         collector.on('collect', async (i) => {
-            await i.deferUpdate();
-            let actionLog = '';
+            await safeDeferUpdate(i);
+            try {
+                let actionLog = '';
 
             // Flee
             if (i.customId === 'bh:flee') {
@@ -276,14 +278,22 @@ module.exports = {
             }
 
             turn++;
-            await msg.edit({ embeds: [makeBossEmbed(actionLog)], components: buildButtons() });
+                await msg.edit({ embeds: [makeBossEmbed(actionLog)], components: buildButtons() });
+            } catch (err) {
+                console.error('Boss hunt interaction error:', err);
+                player.inBattle = false;
+                await player.save().catch(() => { });
+                await safeReply(i, '❌ İşlem sırasında hata oluştu. Lütfen tekrar dene.');
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
+                collector.stop('error');
+            }
         });
 
         collector.on('end', async (_, reason) => {
             if (!['win', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();
-                msg.edit({ components: [] }).catch(() => { });
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
             }
         });
     }

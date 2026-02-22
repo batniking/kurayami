@@ -5,6 +5,7 @@ const { errorEmbed, getColor } = require('../utils/embedBuilder');
 const { calcDamage, applyEffects, buildFighterState, processDotsAndStatuses, isSkipping } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
+const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
 const RACE_SKILLS = require('../data/race_skills.json');
 
 // ──────── Dungeon Tanımları ────────
@@ -217,25 +218,25 @@ module.exports = {
         const collector = msg.createMessageComponentCollector({ time: 180000, filter: i => i.user.id === message.author.id });
 
         collector.on('collect', async (i) => {
-            await i.deferUpdate();
-
-            // ── Kaç ──
-            if (i.customId === 'dg:flee') {
-                player.inBattle = false;
-                player.gold += totalGoldGained;
-                player.diamond += totalDiamondGained;
-                await player.save();
-                if (totalExpGained > 0) await addExp(player, totalExpGained, null);
-                await msg.edit({
-                    embeds: [new EmbedBuilder().setColor(0x95a5a6)
-                        .setTitle('🏃 Zindandan Kaçtın!')
-                        .setDescription(`Toplam kazanımlar:\n+${totalExpGained} EXP | +${totalGoldGained} 💰 | +${totalDiamondGained} 💎`)
-                        .setFooter({ text: '⚡ Kurayami RPG' })],
-                    components: []
-                });
-                collector.stop('fled');
-                return;
-            }
+            await safeDeferUpdate(i);
+            try {
+                // ── Kaç ──
+                if (i.customId === 'dg:flee') {
+                    player.inBattle = false;
+                    player.gold += totalGoldGained;
+                    player.diamond += totalDiamondGained;
+                    await player.save();
+                    if (totalExpGained > 0) await addExp(player, totalExpGained, null);
+                    await msg.edit({
+                        embeds: [new EmbedBuilder().setColor(0x95a5a6)
+                            .setTitle('🏃 Zindandan Kaçtın!')
+                            .setDescription(`Toplam kazanımlar:\n+${totalExpGained} EXP | +${totalGoldGained} 💰 | +${totalDiamondGained} 💎`)
+                            .setFooter({ text: '⚡ Kurayami RPG' })],
+                        components: []
+                    });
+                    collector.stop('fled');
+                    return;
+                }
 
             // ── Oyuncu hamlesi ──
             let usedSkill = null;
@@ -355,14 +356,22 @@ module.exports = {
                 }
             }
 
-            await msg.edit({ embeds: [makeEmbed(log)], components: buildButtons() });
+                await msg.edit({ embeds: [makeEmbed(log)], components: buildButtons() });
+            } catch (err) {
+                console.error('Dungeon interaction error:', err);
+                player.inBattle = false;
+                await player.save().catch(() => { });
+                await safeReply(i, '❌ İşlem sırasında hata oluştu. Lütfen tekrar dene.');
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
+                collector.stop('error');
+            }
         });
 
         collector.on('end', async (_, reason) => {
             if (!['done', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();
-                msg.edit({ components: [] }).catch(() => { });
+                msg.edit({ components: buildButtons(true) }).catch(() => { });
             }
         });
     }
