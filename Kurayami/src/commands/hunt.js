@@ -146,18 +146,31 @@ module.exports = {
                 return;
             }
 
+            // ── Skill / Saldırı tespiti ──
+            let usedSkill = null;
+            let skillIdx = -1;
+            if (i.customId.startsWith('hunt:skill:')) {
+                skillIdx = parseInt(i.customId.split(':')[2]);
+                usedSkill = skills[skillIdx] || null;
+            }
+
+            // DOT işleme (saldırıdan önce)
+            const dotLogs = processDotsAndStatuses(fighter);
+            if (dotLogs.length) actionLog += dotLogs.join('\n') + '\n';
+
             // Oyuncu saldırı
             const playerDmg = calcDamage(fighter, enemy, usedSkill);
             enemy.hp -= playerDmg;
 
             if (usedSkill && skillIdx >= 0) skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
-            for (let i = 0; i < skillCooldowns.length; i++) if (skillCooldowns[i] > 0 && i !== skillIdx) skillCooldowns[i]--;
-
-            actionLog += `⚔️ **${player.username}** → ${usedSkill ? `**⚡ ${usedSkill.name}** ile` : ''} **${playerDmg}** hasar!\n`;
+            for (let k = 0; k < skillCooldowns.length; k++) if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
 
             if (usedSkill) {
+                actionLog += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
                 const effectLogs = applyEffects(usedSkill, fighter, enemy);
                 if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
+            } else {
+                actionLog += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
             }
 
             // Düşman ölümü
@@ -214,9 +227,9 @@ module.exports = {
                 return;
             }
 
-            // DOT işleme
-            const dotLogs = processDotsAndStatuses(enemy);
-            if (dotLogs.length) actionLog += dotLogs.join(' ') + '\n';
+            // Düşman DOT işleme
+            const enemyDotLogs = processDotsAndStatuses(enemy);
+            if (enemyDotLogs.length) actionLog += enemyDotLogs.join(' ') + '\n';
 
             // Düşman saldırı
             if (!isSkipping(enemy)) {
