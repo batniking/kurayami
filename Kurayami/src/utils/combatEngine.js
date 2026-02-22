@@ -3,7 +3,12 @@
  */
 
 function calcDamage(attacker, defender, skill) {
-    let base = skill?.damage ? Math.floor((attacker.power * 2) * (skill.damage / 100)) : Math.floor((attacker.power * 2));
+    let base = Math.floor(attacker.power * 2);
+    if (skill?.damage) {
+        base = Math.floor((attacker.power * 2) * (skill.damage / 100));
+    } else if (skill?.power) {
+        base = Math.floor((attacker.power * 2) * skill.power);
+    }
     const defReduction = Math.floor(defender.defense / 2);
     const random = Math.floor(Math.random() * 10) + 1;
     let dmg = Math.max(1, base - defReduction + random);

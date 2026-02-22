@@ -6,6 +6,8 @@ const { calcDamage, applyEffects, processDotsAndStatuses, isSkipping, buildFight
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
+const battleSessions = require('../utils/battleSessions');
+const { getOrCreateBattleThread } = require('../utils/threadHelper');
 
 const BOSSES_DATA = require('../data/bosses.json');
 
@@ -47,6 +49,13 @@ function getPlayerSkills(player) {
         if (t) return t.skills;
     }
     return [];
+}
+
+function formatSkills(skills) {
+    if (!skills.length) return null;
+    const parts = skills.slice(0, 4).map(s => `⚡ ${s.name}`);
+    const text = parts.join(' | ');
+    return text.length > 800 ? parts.join('\n') : text;
 }
 
 module.exports = {
@@ -103,20 +112,26 @@ module.exports = {
             return [row];
         };
 
-        const makeBossEmbed = (log) => new EmbedBuilder()
-            .setColor(0xe74c3c)
-            .setTitle(`${boss.emoji} Boss Savaşı — ${boss.name}`)
-            .setDescription(`**Tier:** ${tierLabel}\n\n${log}`)
-            .addFields(
-                { name: `${player.username} HP`, value: `❤️ ${fighter.hp}/${fighter.maxHp}`, inline: true },
-                { name: `${boss.name} HP`, value: `💀 ${Math.max(0, boss.hp)}/${boss.maxHp}`, inline: true },
-                { name: '⚔️ Tur', value: `${turn}`, inline: true }
-            )
-            .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' })
-            .setTimestamp();
+        const makeBossEmbed = (log) => {
+            const embed = new EmbedBuilder()
+                .setColor(0xe74c3c)
+                .setTitle(`${boss.emoji} Boss Savaşı — ${boss.name}`)
+                .setDescription(`**Tier:** ${tierLabel}\n\n${log}`)
+                .addFields(
+                    { name: `${player.username} HP`, value: `❤️ ${fighter.hp}/${fighter.maxHp}`, inline: true },
+                    { name: `${boss.name} HP`, value: `💀 ${Math.max(0, boss.hp)}/${boss.maxHp}`, inline: true },
+                    { name: '⚔️ Tur', value: `${turn}`, inline: true }
+                )
+                .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' })
+                .setTimestamp();
+            const skillsText = formatSkills(skills);
+            if (skillsText) embed.addFields({ name: '⚡ Yetenekler', value: skillsText, inline: false });
+            return embed;
+        };
 
-        const msg = await message.reply({ embeds: [makeBossEmbed(battleLog)], components: buildButtons() });
-
+        const battleChannel = await getOrCreateBattleThread(message, `Boss — ${player.username}`);
+        const msg = await battleChannel.send({ content: message.author.toString(), embeds: [makeBossEmbed(battleLog)], components: buildButtons() });
+        battleSessions.register(msg.id, 'bosshunt', message.author.id);
         const collector = msg.createMessageComponentCollector({
             time: 120000,
             filter: i => i.user.id === message.author.id,
@@ -139,17 +154,19 @@ module.exports = {
                 return;
             }
 
-            // Oyuncu saldırı
             let usedSkill = null;
             if (i.customId.startsWith('bh:skill:')) {
                 const idx = parseInt(i.customId.split(':')[2]);
                 usedSkill = skills[idx] || null;
+                if (!usedSkill) {
+                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                    return;
+                }
             }
 
             const playerDmg = calcDamage(fighter, boss, usedSkill);
             boss.hp -= playerDmg;
             actionLog += `⚔️ **${player.username}** ${usedSkill ? `**${usedSkill.name}** ile` : ''} **${playerDmg}** hasar verdi!\n`;
-
             if (usedSkill) {
                 const effectLogs = applyEffects(usedSkill, fighter, boss);
                 if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
@@ -290,6 +307,7 @@ module.exports = {
         });
 
         collector.on('end', async (_, reason) => {
+            battleSessions.unregister(msg.id);
             if (!['win', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();

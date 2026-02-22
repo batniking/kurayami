@@ -1,13 +1,14 @@
 const Player = require('../models/Player');
 const InventoryItem = require('../models/InventoryItem');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { errorEmbed, getColor } = require('../utils/embedBuilder');
+const { errorEmbed } = require('../utils/embedBuilder');
 const { calcDamage, applyEffects, buildFighterState, processDotsAndStatuses, isSkipping } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
+const battleSessions = require('../utils/battleSessions');
+const { getOrCreateBattleThread } = require('../utils/threadHelper');
 const RACE_SKILLS = require('../data/race_skills.json');
-
 // ──────── Dungeon Tanımları ────────
 const DUNGEONS = {
     goblin_cave: {
@@ -116,6 +117,16 @@ function hpBar(hp, max, len = 8) {
     return '🟩'.repeat(fill) + '⬛'.repeat(len - fill);
 }
 
+function formatSkills(skills, cooldowns) {
+    if (!skills.length) return null;
+    const parts = skills.slice(0, 4).map((s, idx) => {
+        const cd = cooldowns[idx] || 0;
+        return cd > 0 ? `🕐 ${s.name} (${cd}t)` : `⚡ ${s.name}`;
+    });
+    const text = parts.join(' | ');
+    return text.length > 800 ? parts.join('\n') : text;
+}
+
 module.exports = {
     name: 'dungeon',
     aliases: ['dg', 'zindan'],
@@ -177,7 +188,7 @@ module.exports = {
             const isBoss = currentRoom >= totalRooms;
             const pctP = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
             const pctE = Math.max(0, Math.round((enemy.hp / enemy.maxHp) * 100));
-            return new EmbedBuilder()
+            const embed = new EmbedBuilder()
                 .setColor(isBoss ? 0xf1c40f : (dungeon.color || 0x9b59b6))
                 .setTitle(`${dungeon.name} — ${isBoss ? '💀 BOSS ODASI!' : `Oda ${currentRoom}/${totalRooms}`}`)
                 .addFields(
@@ -189,6 +200,9 @@ module.exports = {
                 )
                 .setFooter({ text: '⚡ Kurayami RPG • Dungeon' })
                 .setTimestamp();
+            const skillsText = formatSkills(skills, skillCooldowns);
+            if (skillsText) embed.addFields({ name: '⚡ Yetenekler', value: skillsText, inline: false });
+            return embed;
         };
 
         const buildButtons = (disabled = false) => {
@@ -210,11 +224,13 @@ module.exports = {
             return [row];
         };
 
-        const msg = await message.reply({
+        const battleChannel = await getOrCreateBattleThread(message, `Dungeon — ${player.username}`);
+        const msg = await battleChannel.send({
+            content: message.author.toString(),
             embeds: [makeEmbed(`🚪 **${dungeon.name}**'a girdin!\n${enemy.emoji} **${enemy.name}** ile karşılaştın!`)],
             components: buildButtons()
         });
-
+        battleSessions.register(msg.id, 'dungeon', message.author.id);
         const collector = msg.createMessageComponentCollector({ time: 180000, filter: i => i.user.id === message.author.id });
 
         collector.on('collect', async (i) => {
@@ -244,6 +260,14 @@ module.exports = {
             if (i.customId.startsWith('dg:skill:')) {
                 skillIdx = parseInt(i.customId.split(':')[2]);
                 usedSkill = skills[skillIdx] || null;
+                if (!usedSkill) {
+                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                    return;
+                }
+                if ((skillCooldowns[skillIdx] || 0) > 0) {
+                    await safeReply(i, '⏳ Bu skill bekleme süresinde.');
+                    return;
+                }
             }
 
             // DOT işle
@@ -255,7 +279,6 @@ module.exports = {
             } else {
                 const playerDmg = calcDamage(fighter, enemy, usedSkill);
                 enemy.hp -= playerDmg;
-
                 if (usedSkill && skillIdx >= 0) {
                     skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
                 }
@@ -368,6 +391,7 @@ module.exports = {
         });
 
         collector.on('end', async (_, reason) => {
+            battleSessions.unregister(msg.id);
             if (!['done', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();

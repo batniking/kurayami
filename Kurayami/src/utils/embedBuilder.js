@@ -80,8 +80,8 @@ function profileEmbed(player, user) {
         .setTimestamp();
 }
 
-function combatEmbed(attacker, defender, lastAction, turn, color) {
-    return new EmbedBuilder()
+function combatEmbed(attacker, defender, lastAction, turn, color, skillsText) {
+    const embed = new EmbedBuilder()
         .setColor(color || 0xe74c3c)
         .setTitle(`⚔️ Savaş — Tur ${turn}`)
         .addFields(
@@ -100,6 +100,10 @@ function combatEmbed(attacker, defender, lastAction, turn, color) {
         )
         .setFooter({ text: '⚡ Kurayami RPG • Savaş Sistemi' })
         .setTimestamp();
+    if (skillsText) {
+        embed.addFields({ name: '⚡ Yetenekler', value: skillsText, inline: false });
+    }
+    return embed;
 }
 
 function itemEmbed(item) {

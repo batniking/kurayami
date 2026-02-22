@@ -7,8 +7,10 @@ const { addExp } = require('../utils/levelSystem');
 const { rollNpcDrop } = require('../utils/dropSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
-
+const battleSessions = require('../utils/battleSessions');
+const { getOrCreateBattleThread } = require('../utils/threadHelper');
 const RACE_SKILLS = require('../data/race_skills.json');
+
 
 const TIER_COLOR = { weak: 0x2ecc71, medium: 0xe67e22, strong: 0xe74c3c };
 
@@ -71,6 +73,15 @@ function getPlayerSkills(player) {
     return [];
 }
 
+function formatSkills(skills, cooldowns) {
+    if (!skills.length) return null;
+    const parts = skills.slice(0, 3).map((s, idx) => {
+        const cd = cooldowns[idx] || 0;
+        return cd > 0 ? `🕐 ${s.name} (${cd}t)` : `⚡ ${s.name}`;
+    });
+    const text = parts.join(' | ');
+    return text.length > 800 ? parts.join('\n') : text;
+}
 
 module.exports = {
     name: 'hunt',
@@ -88,14 +99,12 @@ module.exports = {
 
         const npc = pickNpc(player.level);
         const skills = getPlayerSkills(player);
-
+        const skillCooldowns = skills.map(() => 0);
         const fighter = buildFighterState(player, player.username);
         const enemy = { ...npc, tempBuffs: {}, burn: null, dot: null, frozen: 0, stunned: 0, skipTurns: 0, noHeal: 0 };
         let turn = 1;
         let battleLog = '_Savaş başlıyor!_';
         const color = getColor(player.race);
-
-        const skillCooldowns = skills.map(() => 0);
 
         const buildButtons = (disabled = false) => {
             const attackBtn = new ButtonBuilder().setCustomId('hunt:attack').setLabel('⚔️ Saldır').setStyle(ButtonStyle.Danger).setDisabled(disabled);
@@ -120,10 +129,12 @@ module.exports = {
         const embed = combatEmbed(
             { name: player.username, hp: fighter.hp, maxHp: fighter.maxHp },
             { name: `${npc.emoji} ${npc.name}`, hp: enemy.hp, maxHp: enemy.maxHp },
-            battleLog, turn, color
+            battleLog, turn, color, formatSkills(skills, skillCooldowns)
         );
 
-        const msg = await message.reply({ embeds: [embed], components: buildButtons() });
+        const battleChannel = await getOrCreateBattleThread(message, `Hunt — ${message.author.username}`);
+        const msg = await battleChannel.send({ content: message.author.toString(), embeds: [embed], components: buildButtons() });
+        battleSessions.register(msg.id, 'hunt', message.author.id);
         const collector = msg.createMessageComponentCollector({
             time: 60000,
             filter: i => i.user.id === message.author.id,
@@ -153,6 +164,14 @@ module.exports = {
             if (i.customId.startsWith('hunt:skill:')) {
                 skillIdx = parseInt(i.customId.split(':')[2]);
                 usedSkill = skills[skillIdx] || null;
+                if (!usedSkill) {
+                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                    return;
+                }
+                if ((skillCooldowns[skillIdx] || 0) > 0) {
+                    await safeReply(i, '⏳ Bu skill bekleme süresinde.');
+                    return;
+                }
             }
 
             // DOT işleme (saldırıdan önce)
@@ -162,7 +181,6 @@ module.exports = {
             // Oyuncu saldırı
             const playerDmg = calcDamage(fighter, enemy, usedSkill);
             enemy.hp -= playerDmg;
-
             if (usedSkill && skillIdx >= 0) skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
             for (let k = 0; k < skillCooldowns.length; k++) if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
 
@@ -266,7 +284,7 @@ module.exports = {
             const newEmbed = combatEmbed(
                 { name: player.username, hp: fighter.hp, maxHp: fighter.maxHp },
                 { name: `${npc.emoji} ${npc.name}`, hp: enemy.hp, maxHp: enemy.maxHp },
-                actionLog, turn, color
+                actionLog, turn, color, formatSkills(skills, skillCooldowns)
             );
                 await msg.edit({ embeds: [newEmbed], components: buildButtons() });
             } catch (err) {
@@ -280,6 +298,7 @@ module.exports = {
         });
 
         collector.on('end', async (_, reason) => {
+            battleSessions.unregister(msg.id);
             if (!['win', 'lose', 'fled'].includes(reason)) {
                 player.inBattle = false;
                 await player.save();

@@ -97,6 +97,20 @@ module.exports = {
             return message.reply({ embeds: [errorEmbed('Geçersiz tür! Geçerli türler: `gold`, `diamond`, `hollowcoin`, `item`, `exp`')] });
         }
 
+        // ─────── +admin clearbattle @user ───────
+        if (sub === 'clearbattle' || sub === 'unstuck') {
+            const target = message.mentions.users.first();
+            if (!target) return message.reply({ embeds: [errorEmbed('Kullanıcı belirt!')] });
+            const player = await Player.findOne({ where: { discordId: target.id } });
+            if (!player) return message.reply({ embeds: [errorEmbed('Bu kullanıcının karakteri yok!')] });
+
+            player.inBattle = false;
+            player.hp = Math.max(1, player.hp || 1);
+            await player.save();
+
+            return message.reply({ embeds: [successEmbed('Savaş Kilidi Kaldırıldı', `✅ **${target.displayName}** artık savaşta değil.`)] });
+        }
+
         // ─────── +admin reset @user ───────
         if (sub === 'reset') {
             const target = message.mentions.users.first();
@@ -154,6 +168,7 @@ module.exports = {
                     { name: '+admin give @user hollowcoin <miktar>', value: 'Hollow Coin ver', inline: false },
                     { name: '+admin give @user item <item_id> [adet]', value: 'Item ver (`+admin items` ile ID\'leri listele)', inline: false },
                     { name: '+admin give @user exp <miktar>', value: 'EXP ver', inline: false },
+                    { name: '+admin clearbattle @user', value: 'Savaş kilidini kaldır', inline: false },
                     { name: '+admin reset @user', value: 'Karakteri sıfırla', inline: false },
                     { name: '+admin info @user', value: 'Oyuncu bilgilerini gör', inline: false },
                 )

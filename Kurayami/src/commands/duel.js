@@ -1,10 +1,12 @@
 const Player = require('../models/Player');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { errorEmbed, getColor } = require('../utils/embedBuilder');
+const { errorEmbed } = require('../utils/embedBuilder');
 const { applyEffects, processDotsAndStatuses, isSkipping, buildFighterState } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
+const battleSessions = require('../utils/battleSessions');
+const { getOrCreateBattleThread } = require('../utils/threadHelper');
 
 const RACE_SKILLS = require('../data/race_skills.json');
 
@@ -118,6 +120,7 @@ function buildButtons(whoseTurn, skills, cooldowns, disabled = false) {
         });
         rows.push(new ActionRowBuilder().addComponents(...skillBtns));
     }
+
     return rows;
 }
 
@@ -183,11 +186,14 @@ module.exports = {
             let currentTurn = f1.speed >= f2.speed ? 'f1' : 'f2';
             let log = `⚔️ **${currentTurn === 'f1' ? f1.name : f2.name}** ilk hamleyi yapıyor!`;
 
-            const duelMsg = await inviteMsg.edit({
+            await inviteMsg.edit({ embeds: [new EmbedBuilder().setColor(0x2ecc71).setDescription('✅ Duel kabul edildi! Aşağıda devam ediyor.')], components: [] }).catch(() => {});
+            const duelChannel = await getOrCreateBattleThread(inviteMsg, `Duel — ${message.author.username} vs ${target.username}`);
+            const duelMsg = await duelChannel.send({
                 content: `${message.author} ${target}`,
                 embeds: [buildDuelEmbed(f1, f2, log, turn, ranked)],
                 components: buildButtons(currentTurn, currentTurn === 'f1' ? skills1 : skills2, currentTurn === 'f1' ? cd1 : cd2)
             });
+            battleSessions.register(duelMsg.id, 'duel', [message.author.id, target.id]);
 
             const duelCollector = duelMsg.createMessageComponentCollector({ time: 180000 });
 
@@ -249,12 +255,19 @@ module.exports = {
                     if (btn.customId.startsWith(`${prefix}:skill:`)) {
                         skillIdx = parseInt(btn.customId.split(':')[2]);
                         usedSkill = skills[skillIdx] || null;
+                        if (!usedSkill) {
+                            await safeReply(btn, '❌ Bu skill kullanılamıyor.');
+                            return;
+                        }
+                        if ((cd[skillIdx] || 0) > 0) {
+                            await safeReply(btn, '⏳ Bu skill bekleme süresinde.');
+                            return;
+                        }
                     }
 
                     const dmg = calcDmg(attacker, defenderF, usedSkill);
                     defenderF.hp -= dmg;
 
-                    // Skill cooldown'u başlat
                     if (usedSkill && skillIdx >= 0) {
                         cd[skillIdx] = usedSkill.cooldown || 2;
                     }
@@ -336,10 +349,10 @@ module.exports = {
                 const nextSkills = currentTurn === 'f1' ? skills1 : skills2;
                 const nextCd = currentTurn === 'f1' ? cd1 : cd2;
 
-                    await duelMsg.edit({
-                        embeds: [buildDuelEmbed(f1, f2, `${log}\n\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
-                        components: buildButtons(currentTurn, nextSkills, nextCd)
-                    });
+                await duelMsg.edit({
+                    embeds: [buildDuelEmbed(f1, f2, `${log}\n\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
+                    components: buildButtons(currentTurn, nextSkills, nextCd)
+                });
                 } catch (err) {
                     console.error('Duel interaction error:', err);
                     challenger.inBattle = false;
@@ -353,6 +366,7 @@ module.exports = {
             });
 
             duelCollector.on('end', async (_, reason) => {
+                battleSessions.unregister(duelMsg.id);
                 if (reason !== 'done') {
                     challenger.inBattle = false;
                     defender.inBattle = false;
