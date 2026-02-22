@@ -648,5 +648,220 @@
                 }
             }
         }
+    ],
+    "arrancar_weapons": [
+        {
+            "id": "zanpakuto_arrancar",
+            "name": "Arrancar Zanpakuto",
+            "tier": "rare",
+            "emoji": "🗡️",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 35,
+                "speed": 10
+            },
+            "description": "Bir Arrancar'ın temel kılıcı. Resurreción için kullanılır."
+        },
+        {
+            "id": "murcielago_blade",
+            "name": "Murciélago",
+            "tier": "legendary",
+            "emoji": "🦇",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 85,
+                "defense": 30,
+                "speed": 20
+            },
+            "description": "Ulquiorra Cifer'in Resurreción kılıcı.",
+            "activeSkill": {
+                "name": "Cero Oscuras",
+                "damage": 2.5,
+                "cooldown": 4
+            }
+        },
+        {
+            "id": "pantera_claw",
+            "name": "Pantera Pençesi",
+            "tier": "legendary",
+            "emoji": "🐆",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 90,
+                "speed": 45
+            },
+            "description": "Grimmjow'un Pantera formu pençesi.",
+            "activeSkill": {
+                "name": "Desgarrón",
+                "damage": 3.0,
+                "cooldown": 4
+            }
+        },
+        {
+            "id": "arrogante_axe",
+            "name": "Arrogante Baltası",
+            "tier": "legendary",
+            "emoji": "💀",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 70,
+                "defense": 80
+            },
+            "description": "Baraggan'ın Arrogante formu silahı. Zamanı çürütür.",
+            "activeSkill": {
+                "name": "Respira",
+                "damage": 2.8,
+                "cooldown": 5
+            }
+        },
+        {
+            "id": "los_lobos_gun",
+            "name": "Los Lobos Tabancası",
+            "tier": "legendary",
+            "emoji": "🐺",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 80,
+                "speed": 50
+            },
+            "description": "Starrk'ın Los Lobos formu tabancaları.",
+            "activeSkill": {
+                "name": "Colmillo",
+                "damage": 2.5,
+                "cooldown": 3
+            }
+        },
+        {
+            "id": "tiburon_blade",
+            "name": "Tiburón Kılıcı",
+            "tier": "legendary",
+            "emoji": "🦈",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 75,
+                "defense": 40,
+                "speed": 30
+            },
+            "description": "Harribel'in Tiburón formu su kılıcı.",
+            "activeSkill": {
+                "name": "Cascada",
+                "damage": 2.6,
+                "cooldown": 4
+            }
+        },
+        {
+            "id": "cero_oscuras_staff",
+            "name": "Cero Oscuras Asası",
+            "tier": "mythic",
+            "emoji": "🌑",
+            "type": "weapon",
+            "slot": "weapon",
+            "race": "hollow",
+            "stats": {
+                "power": 115,
+                "defense": 35,
+                "speed": 25
+            },
+            "description": "Arrancar'ların nihai Cero enerjisini odaklayan efsane asa.",
+            "activeSkill": {
+                "name": "Cero Oscuras MAX",
+                "damage": 4.0,
+                "cooldown": 6
+            }
+        }
+    ],
+    "craft_materials": [
+        {
+            "id": "hollow_mask",
+            "name": "Hollow Maskesi",
+            "tier": "rare",
+            "emoji": "😱",
+            "type": "material",
+            "description": "Hollow evrim için gerekli. Menos Grande'den düşer."
+        },
+        {
+            "id": "menos_mask",
+            "name": "Menos Maskesi",
+            "tier": "epic",
+            "emoji": "🦂",
+            "type": "material",
+            "description": "Adjuchas evrim için gerekli. Adjuchas boss'lardan düşer."
+        },
+        {
+            "id": "hogyoku",
+            "name": "Hōgyoku",
+            "tier": "mythic",
+            "emoji": "💠",
+            "type": "material",
+            "description": "Arrancar evrimi için gerekli. Aizen'den düşer."
+        },
+        {
+            "id": "bankai_crystal",
+            "name": "Bankai Kristali",
+            "tier": "legendary",
+            "emoji": "🔮",
+            "type": "material",
+            "description": "Shinigami Bankai evrimi için gerekli. Byakuya/Kenpachi'den düşer."
+        },
+        {
+            "id": "quincy_soul",
+            "name": "Quincy Ruhu",
+            "tier": "epic",
+            "emoji": "✦",
+            "type": "material",
+            "description": "Quincy Sternritter evrimi için gerekli. Yhwach'tan düşer."
+        },
+        {
+            "id": "reishi_shard",
+            "name": "Reishi Kırığı",
+            "tier": "common",
+            "emoji": "✨",
+            "type": "material",
+            "description": "Temel crafting malzemesi. NPC'lerden düşer."
+        },
+        {
+            "id": "spirit_core",
+            "name": "Ruh Özü",
+            "tier": "uncommon",
+            "emoji": "🌟",
+            "type": "material",
+            "description": "Orta seviye crafting malzemesi."
+        },
+        {
+            "id": "dark_fragment",
+            "name": "Karanlık Parça",
+            "tier": "rare",
+            "emoji": "🌑",
+            "type": "material",
+            "description": "Karanlık efsane silahlar için gerekli."
+        },
+        {
+            "id": "dragon_scale",
+            "name": "Ejderha Pulu",
+            "tier": "epic",
+            "emoji": "🐉",
+            "type": "material",
+            "description": "Nadir craft malzemesi. Boss'lardan düşer."
+        },
+        {
+            "id": "void_crystal",
+            "name": "Void Kristali",
+            "tier": "legendary",
+            "emoji": "🔮",
+            "type": "material",
+            "description": "Mythic silahlar için gerekli. Çok nadir."
+        }
     ]
 }

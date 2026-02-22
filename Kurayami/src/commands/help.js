@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 
+
 const COMMANDS = [
     {
         category: '🚀 Başlangıç', cmds: [
@@ -12,15 +13,34 @@ const COMMANDS = [
     {
         category: '⚔️ Savaş', cmds: [
             { name: '+hunt', desc: 'NPC avla, EXP & item kazan' },
-            { name: '+duel [@]', desc: 'PvP düellosu' },
-            { name: '+bosshunt', desc: 'Boss avı (yakında)' },
+            { name: '+bosshunt [boss_id]', desc: 'Boss avı — güçlenip gel!' },
+            { name: '+dungeon [id]', desc: 'Zindana gir (oda oda ilerle)' },
+            { name: '+dungeon list', desc: 'Tüm zindanları listele' },
+            { name: '+duel @oyuncu [ranked]', desc: 'PvP düellosu (skill ile)' },
         ]
     },
     {
         category: '🎒 Envanter', cmds: [
             { name: '+inv', desc: 'Envanterini görüntüle' },
+            { name: '+equip <item_id>', desc: 'Item tak' },
+            { name: '+equip list', desc: 'Giyili itemları gör' },
+            { name: '+unequip <item_id>', desc: 'Item çıkar' },
             { name: '+shop', desc: 'Dükkanı aç' },
             { name: '+buy <id>', desc: 'Item satın al' },
+            { name: '+craft list', desc: 'Tüm craft tariflerini gör' },
+            { name: '+craft <item_id>', desc: 'Item craft et' },
+            { name: '+rest', desc: "HP'ni yenile" },
+        ]
+    },
+    {
+        category: '🧬 Irk & Evrim', cmds: [
+            { name: '+raceselect', desc: 'Irkını seç (Hollow/Shinigami/Quincy...)' },
+            { name: '+evolve', desc: 'Irk evrimini gerçekleştir' },
+            { name: '+evolve info', desc: 'Evrim yolunu ve gereksinimlerini gör' },
+            { name: '+resurreccion', desc: '💀 Hollow/Arrancar formunu aktif et' },
+            { name: '+bankai', desc: '⚫ Shinigami Bankai/Shikai aktif et' },
+            { name: '+vollstandig', desc: '🏹 Quincy Vollständig/Letzt Stil aktif et' },
+            { name: '+bosslist', desc: 'Tüm boss\'ları ve drop\'larını gör' },
         ]
     },
     {
@@ -40,13 +60,15 @@ const COMMANDS = [
         ]
     },
     {
-        category: '⚙️ Ayarlar (Admin)', cmds: [
+        category: '⚙️ Admin', cmds: [
+            { name: '+admin give @user gold/diamond/item/exp', desc: 'Oyuncuya ver' },
+            { name: '+admin reset @user', desc: 'Karakter sıfırla' },
+            { name: '+admin info @user', desc: 'Oyuncu bilgisi' },
             { name: '+setlog #kanal', desc: 'Log kanalını ayarla' },
-            { name: '+setboss #kanal', desc: 'Boss spawn kanalını ayarla' },
-            { name: '+setlevel #kanal', desc: 'Level atlama bildirim kanalı' },
         ]
     },
 ];
+
 
 module.exports = {
     name: 'help',

@@ -6,7 +6,7 @@ const RACES = [
     { id: 'shinigami', name: 'Shinigami', emoji: '⚫', desc: 'Ruh reaperları. Zanpakuto ve Bankai güçleri.', passive: 'Zanpakuto hasarı +20%' },
     { id: 'hollow', name: 'Hollow', emoji: '💀', desc: 'Ruh yiyiciler. Hollow → Arrancar evrimi.', passive: 'Cero hasar +20%, HP +150' },
     { id: 'quincy', name: 'Quincy', emoji: '🏹', desc: 'Ruh okçuları. Spirit Weapon sistemi.', passive: 'Spirit Weapon hasar +20%' },
-    { id: 'titan', name: 'Titan', emoji: '👹', desc: 'Dev transformasyonlar. 9 Titan tipi.', passive: 'Titan form hasar +20%' },
+
     { id: 'fullbring', name: 'Fullbring', emoji: '✨', desc: 'Cisim güçlendirme. Chad & Orihime tarzı.', passive: 'Fullbring hasar +20%' },
     { id: 'human', name: 'İnsan', emoji: '👤', desc: 'Başlangıç ırkı. Tüm silahlara uyumlu.', passive: 'Tüm istatistikler +5%' },
 ];
