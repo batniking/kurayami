@@ -193,14 +193,18 @@ module.exports = {
                 const isF1Turn = currentTurn === 'f1';
                 const expectedUser = isF1Turn ? message.author.id : target.id;
 
+                // Yanlış kullanıcı — önce deferUpdate, sonra followUp
                 if (btn.user.id !== expectedUser) {
-                    await btn.reply({ content: '⏳ Senin turun değil!', ephemeral: true });
+                    await btn.deferUpdate().catch(() => { });
+                    await btn.followUp({ content: '⏳ Senin turun değil!', ephemeral: true }).catch(() => { });
                     return;
                 }
                 await btn.deferUpdate();
 
+                const prefix = isF1Turn ? 'duel1' : 'duel2';
+
                 // 🏳️ Teslim ol
-                if (btn.customId.endsWith(':surrender')) {
+                if (btn.customId === `${prefix}:surrender`) {
                     duelCollector.stop('done');
                     const loserPlayer = isF1Turn ? challenger : defender;
                     const winnerPlayer = isF1Turn ? defender : challenger;
@@ -231,7 +235,6 @@ module.exports = {
                 const skills = isF1Turn ? skills1 : skills2;
                 const cd = isF1Turn ? cd1 : cd2;
                 const otherCd = isF1Turn ? cd2 : cd1;
-                const prefix = isF1Turn ? 'duel1' : 'duel2';
 
                 // DOT/burn efektleri tur başında
                 const dotLogs = processDotsAndStatuses(attacker);
