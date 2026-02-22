@@ -1,0 +1,26 @@
+{
+  "name": "kurayami-bot",
+  "version": "1.0.0",
+  "description": "Kurayami Anime RPG Discord Bot",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy": "node src/deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "sequelize": "^6.37.3",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

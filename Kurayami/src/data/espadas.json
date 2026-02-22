@@ -1,0 +1,376 @@
+[
+    {
+        "id": "starrk",
+        "name": "Starrk",
+        "espada": 1,
+        "tier": "legendary",
+        "chance": 5,
+        "emoji": "🐺",
+        "skills": [
+            {
+                "id": "los_lobos",
+                "name": "Los Lobos",
+                "damage": 200,
+                "cooldown": 10,
+                "effect": {
+                    "summon": "wolf_soul"
+                }
+            },
+            {
+                "id": "cero_metralleta",
+                "name": "Cero Metralleta",
+                "damage": 120,
+                "targets": 5,
+                "cooldown": 20
+            },
+            {
+                "id": "soul_wolves",
+                "name": "Soul Wolves",
+                "damage": 150,
+                "hits": 2,
+                "cooldown": 45
+            }
+        ]
+    },
+    {
+        "id": "barragan",
+        "name": "Barragan",
+        "espada": 2,
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "💀",
+        "skills": [
+            {
+                "id": "respira",
+                "name": "Respira",
+                "damage": 0,
+                "cooldown": 12,
+                "effect": {
+                    "enemy": {
+                        "defense": -30,
+                        "dot": {
+                            "damage": 50,
+                            "duration": 2
+                        }
+                    }
+                }
+            },
+            {
+                "id": "age_slash",
+                "name": "Age Slash",
+                "damage": 150,
+                "cooldown": 20,
+                "effect": {
+                    "enemy": {
+                        "speed": -40
+                    }
+                }
+            },
+            {
+                "id": "gran_caida",
+                "name": "Gran Caída",
+                "damage": 350,
+                "cooldown": 50,
+                "effect": {
+                    "enemy": {
+                        "skip": 1
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "halibel",
+        "name": "Halibel",
+        "espada": 3,
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🌊",
+        "skills": [
+            {
+                "id": "cascada",
+                "name": "Cascada",
+                "damage": 130,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "dot": {
+                            "damage": 30,
+                            "duration": 2
+                        }
+                    }
+                }
+            },
+            {
+                "id": "la_gota",
+                "name": "La Gota",
+                "damage": 150,
+                "cooldown": 20,
+                "effect": {
+                    "self": {
+                        "reflect": 0.3
+                    }
+                }
+            },
+            {
+                "id": "hirviendo",
+                "name": "Hirviendo",
+                "damage": 300,
+                "aoe": true,
+                "cooldown": 45,
+                "effect": "armorPierce"
+            }
+        ]
+    },
+    {
+        "id": "ulquiorra",
+        "name": "Ulquiorra",
+        "espada": 4,
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🖤",
+        "skills": [
+            {
+                "id": "murciélago",
+                "name": "Murciélago",
+                "damage": 140,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "power": 25
+                    }
+                }
+            },
+            {
+                "id": "lanza",
+                "name": "Lanza del Relámpago",
+                "damage": 220,
+                "aoe": true,
+                "cooldown": 25
+            },
+            {
+                "id": "segunda_etapa",
+                "name": "Segunda Etapa",
+                "damage": 400,
+                "cooldown": 60,
+                "effect": {
+                    "self": {
+                        "power": 40,
+                        "defense": 40,
+                        "speed": 40,
+                        "hp": 40
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "nnoitra",
+        "name": "Nnoitra",
+        "espada": 5,
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🌙",
+        "skills": [
+            {
+                "id": "santa_teresa",
+                "name": "Santa Teresa",
+                "damage": 150,
+                "cooldown": 10,
+                "effect": {
+                    "armorPiercePercent": 0.5
+                }
+            },
+            {
+                "id": "brutal_slash",
+                "name": "Brutal Slash",
+                "damage": 180,
+                "cooldown": 20,
+                "effect": {
+                    "enemy": {
+                        "noHeal": 2
+                    }
+                }
+            },
+            {
+                "id": "six_arms",
+                "name": "Six Arms",
+                "damage": 80,
+                "hits": 6,
+                "cooldown": 40
+            }
+        ]
+    },
+    {
+        "id": "grimmjow",
+        "name": "Grimmjow",
+        "espada": 6,
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🐆",
+        "skills": [
+            {
+                "id": "desgarron",
+                "name": "Desgarrón",
+                "damage": 160,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "speed": 30
+                    }
+                }
+            },
+            {
+                "id": "gran_rey_cero",
+                "name": "Gran Rey Cero",
+                "damage": 240,
+                "aoe": true,
+                "cooldown": 25
+            },
+            {
+                "id": "pantera_full",
+                "name": "Pantera Full",
+                "damage": 450,
+                "cooldown": 60,
+                "effect": {
+                    "self": {
+                        "power": 50,
+                        "defense": 50,
+                        "speed": 50,
+                        "hp": 50,
+                        "duration": 2
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "zommari",
+        "name": "Zommari",
+        "espada": 7,
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "👁️",
+        "skills": [
+            {
+                "id": "amor",
+                "name": "Amor",
+                "damage": 0,
+                "cooldown": 15,
+                "effect": {
+                    "enemy": {
+                        "selfDamage": 1
+                    }
+                }
+            },
+            {
+                "id": "eye_slash",
+                "name": "Eye Slash",
+                "damage": 120,
+                "cooldown": 12,
+                "effect": {
+                    "enemy": {
+                        "speed": -30
+                    }
+                }
+            },
+            {
+                "id": "full_control",
+                "name": "Full Control",
+                "damage": 200,
+                "cooldown": 50,
+                "effect": {
+                    "enemy": {
+                        "skip": 2
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "szayelaporro",
+        "name": "Szayelaporro",
+        "espada": 8,
+        "tier": "normal",
+        "chance": 45,
+        "emoji": "🧬",
+        "skills": [
+            {
+                "id": "analisis",
+                "name": "Análisis",
+                "damage": 100,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "defense": -20
+                    }
+                }
+            },
+            {
+                "id": "gabriel",
+                "name": "Gabriel",
+                "damage": 130,
+                "cooldown": 20,
+                "effect": {
+                    "self": {
+                        "steal": 0.25
+                    }
+                }
+            },
+            {
+                "id": "perfeccion",
+                "name": "Perfección",
+                "damage": 250,
+                "cooldown": 70,
+                "effect": {
+                    "self": {
+                        "reviveOnce": true
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "aaroniero",
+        "name": "Aaroniero",
+        "espada": 9,
+        "tier": "normal",
+        "chance": 45,
+        "emoji": "👻",
+        "skills": [
+            {
+                "id": "memoria",
+                "name": "Memoria",
+                "damage": 100,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "copySkill": true
+                    }
+                }
+            },
+            {
+                "id": "soul_absorb",
+                "name": "Soul Absorb",
+                "damage": 120,
+                "cooldown": 20,
+                "effect": {
+                    "self": {
+                        "healPercent": 0.15
+                    }
+                }
+            },
+            {
+                "id": "copy_form",
+                "name": "Copy Form",
+                "damage": 200,
+                "cooldown": 55,
+                "effect": {
+                    "self": {
+                        "copyBestSkill": true
+                    }
+                }
+            }
+        ]
+    }
+]

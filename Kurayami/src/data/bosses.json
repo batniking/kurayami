@@ -1,0 +1,411 @@
+{
+    "bleach": [
+        {
+            "id": "aizen",
+            "name": "Aizen Sōsuke",
+            "tier": "strong",
+            "emoji": "😏",
+            "hp": 5000,
+            "power": 120,
+            "defense": 80,
+            "speed": 100,
+            "drops": {
+                "gold": [
+                    3000,
+                    5000
+                ],
+                "diamond": 1000,
+                "raceItem": "hogyoku",
+                "raceItemChance": 0.10
+            },
+            "skills": [
+                {
+                    "name": "Kyoka Suigetsu",
+                    "damage": 200,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Hado 90 Kurohitsugi",
+                    "damage": 300,
+                    "cooldown": 5
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "yhwach",
+            "name": "Yhwach",
+            "tier": "strong",
+            "emoji": "👑",
+            "hp": 8000,
+            "power": 160,
+            "defense": 100,
+            "speed": 120,
+            "drops": {
+                "gold": [
+                    5000,
+                    8000
+                ],
+                "diamond": 1000,
+                "raceItem": "quincy_soul",
+                "raceItemChance": 0.15
+            },
+            "skills": [
+                {
+                    "name": "Almighty",
+                    "damage": 250,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Soul Drain",
+                    "damage": 150,
+                    "cooldown": 2,
+                    "effect": {
+                        "enemy": {
+                            "skip": 1
+                        }
+                    }
+                }
+            ],
+            "race": "quincy"
+        },
+        {
+            "id": "grand_fisher",
+            "name": "Grand Fisher",
+            "tier": "weak",
+            "emoji": "🎣",
+            "hp": 800,
+            "power": 40,
+            "defense": 20,
+            "speed": 30,
+            "drops": {
+                "gold": [
+                    200,
+                    400
+                ],
+                "diamond": 50
+            },
+            "skills": [
+                {
+                    "name": "Lure Attack",
+                    "damage": 60,
+                    "cooldown": 3
+                }
+            ],
+            "race": "hollow"
+        },
+        {
+            "id": "menos_grande",
+            "name": "Menos Grande",
+            "tier": "weak",
+            "emoji": "😱",
+            "hp": 600,
+            "power": 35,
+            "defense": 25,
+            "speed": 20,
+            "drops": {
+                "gold": [
+                    150,
+                    300
+                ],
+                "diamond": 50
+            },
+            "skills": [
+                {
+                    "name": "Cero",
+                    "damage": 80,
+                    "cooldown": 3
+                }
+            ],
+            "race": "hollow",
+            "evolutionBoss": true,
+            "evolutionTarget": "menos"
+        },
+        {
+            "id": "adjuchas",
+            "name": "Adjuchas",
+            "tier": "medium",
+            "emoji": "🦂",
+            "hp": 2000,
+            "power": 70,
+            "defense": 50,
+            "speed": 60,
+            "drops": {
+                "gold": [
+                    800,
+                    1500
+                ],
+                "diamond": 250
+            },
+            "skills": [
+                {
+                    "name": "Gran Cero",
+                    "damage": 120,
+                    "cooldown": 3
+                }
+            ],
+            "race": "hollow",
+            "evolutionBoss": true,
+            "evolutionTarget": "adjuchas"
+        },
+        {
+            "id": "vasto_lorde",
+            "name": "Vasto Lorde",
+            "tier": "strong",
+            "emoji": "👿",
+            "hp": 4000,
+            "power": 100,
+            "defense": 70,
+            "speed": 90,
+            "drops": {
+                "gold": [
+                    2000,
+                    4000
+                ],
+                "diamond": 500
+            },
+            "skills": [
+                {
+                    "name": "Ultima Cero",
+                    "damage": 180,
+                    "cooldown": 3
+                }
+            ],
+            "race": "hollow",
+            "evolutionBoss": true,
+            "evolutionTarget": "vasto_lorde"
+        },
+        {
+            "id": "aizen_hogyoku",
+            "name": "Aizen (Hogyoku Formu)",
+            "tier": "strong",
+            "emoji": "💠",
+            "hp": 10000,
+            "power": 200,
+            "defense": 150,
+            "speed": 150,
+            "drops": {
+                "gold": [
+                    8000,
+                    12000
+                ],
+                "diamond": 1000,
+                "raceItem": "hogyoku",
+                "raceItemChance": 0.15
+            },
+            "skills": [
+                {
+                    "name": "Complete Hogyoku",
+                    "damage": 350,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Butterfly Form",
+                    "damage": 200,
+                    "cooldown": 2,
+                    "effect": {
+                        "self": {
+                            "healPercent": 0.1
+                        }
+                    }
+                }
+            ],
+            "race": null
+        }
+    ],
+    "aot": [
+        {
+            "id": "colossal_boss",
+            "name": "Colossal Titan",
+            "tier": "strong",
+            "emoji": "🏔️",
+            "hp": 6000,
+            "power": 130,
+            "defense": 100,
+            "speed": 40,
+            "drops": {
+                "gold": [
+                    4000,
+                    6000
+                ],
+                "diamond": 500
+            },
+            "skills": [
+                {
+                    "name": "Steam Explosion",
+                    "damage": 200,
+                    "cooldown": 3,
+                    "aoe": true
+                },
+                {
+                    "name": "Stomp",
+                    "damage": 150,
+                    "cooldown": 2
+                }
+            ],
+            "race": "titan"
+        },
+        {
+            "id": "armored_boss",
+            "name": "Armored Titan",
+            "tier": "medium",
+            "emoji": "🛡️",
+            "hp": 3500,
+            "power": 90,
+            "defense": 150,
+            "speed": 60,
+            "drops": {
+                "gold": [
+                    2000,
+                    3500
+                ],
+                "diamond": 250
+            },
+            "skills": [
+                {
+                    "name": "Armor Charge",
+                    "damage": 130,
+                    "cooldown": 2
+                }
+            ],
+            "race": "titan"
+        },
+        {
+            "id": "founding_titan",
+            "name": "Eren Yeager (Founding Titan)",
+            "tier": "strong",
+            "emoji": "🔑",
+            "hp": 9000,
+            "power": 170,
+            "defense": 120,
+            "speed": 100,
+            "drops": {
+                "gold": [
+                    6000,
+                    10000
+                ],
+                "diamond": 1000,
+                "raceItem": "titan_soul",
+                "raceItemChance": 0.12
+            },
+            "skills": [
+                {
+                    "name": "Rumbling",
+                    "damage": 300,
+                    "cooldown": 5,
+                    "aoe": true
+                },
+                {
+                    "name": "Hardening",
+                    "damage": 0,
+                    "cooldown": 3,
+                    "effect": {
+                        "self": {
+                            "defense": 100,
+                            "duration": 2
+                        }
+                    }
+                }
+            ],
+            "race": "titan"
+        }
+    ],
+    "sololeveling": [
+        {
+            "id": "antares",
+            "name": "Antares (Demon King)",
+            "tier": "strong",
+            "emoji": "😈",
+            "hp": 12000,
+            "power": 220,
+            "defense": 180,
+            "speed": 160,
+            "drops": {
+                "gold": [
+                    10000,
+                    15000
+                ],
+                "diamond": 2000
+            },
+            "skills": [
+                {
+                    "name": "Dragon's Breath",
+                    "damage": 400,
+                    "cooldown": 4,
+                    "aoe": true
+                },
+                {
+                    "name": "Domination",
+                    "damage": 250,
+                    "cooldown": 3
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "shadow_monarch_boss",
+            "name": "Shadow Monarch Sung Jinwoo",
+            "tier": "strong",
+            "emoji": "🌑",
+            "hp": 7000,
+            "power": 150,
+            "defense": 110,
+            "speed": 140,
+            "drops": {
+                "gold": [
+                    5000,
+                    8000
+                ],
+                "diamond": 1000,
+                "raceItem": "shadow_essence",
+                "raceItemChance": 0.10
+            },
+            "skills": [
+                {
+                    "name": "Shadow Exchange",
+                    "damage": 180,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Ruler's Authority",
+                    "damage": 250,
+                    "cooldown": 4
+                }
+            ],
+            "race": null
+        }
+    ],
+    "weekly": {
+        "id": "weekly_world_boss",
+        "name": "Weekly World Boss",
+        "tier": "strong",
+        "emoji": "🌍",
+        "hp": 50000,
+        "power": 250,
+        "defense": 200,
+        "speed": 150,
+        "drops": {
+            "gold": [
+                20000,
+                30000
+            ],
+            "diamond": 5000,
+            "special": true
+        },
+        "skills": [
+            {
+                "name": "World Quake",
+                "damage": 500,
+                "cooldown": 5,
+                "aoe": true
+            },
+            {
+                "name": "Void Crush",
+                "damage": 300,
+                "cooldown": 3
+            }
+        ],
+        "maxPartySize": 20,
+        "notes": "Haftalık spawn, herkese açık"
+    }
+}

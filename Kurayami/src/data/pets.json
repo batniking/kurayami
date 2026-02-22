@@ -1,0 +1,105 @@
+[
+    {
+        "id": "kon",
+        "name": "Kon",
+        "anime": "Bleach",
+        "emoji": "🦁",
+        "rarity": "rare",
+        "chance": 25,
+        "passive": {
+            "exp": 0.10
+        },
+        "description": "Senin yanında olan küçük aslan, %10 ekstra EXP kazandırır."
+    },
+    {
+        "id": "happy",
+        "name": "Happy",
+        "anime": "Fairy Tail",
+        "emoji": "🐱",
+        "rarity": "rare",
+        "chance": 25,
+        "passive": {
+            "speed": 15
+        },
+        "description": "Happy uçarak sana yardım eder, +15 Hız bonusu verir."
+    },
+    {
+        "id": "ein",
+        "name": "Ein",
+        "anime": "Cowboy Bebop",
+        "emoji": "🐕",
+        "rarity": "epic",
+        "chance": 15,
+        "passive": {
+            "defense": 20
+        },
+        "description": "Zeki köpek Ein sayesinde +20 Savunma kazanırsın."
+    },
+    {
+        "id": "puck",
+        "name": "Puck",
+        "anime": "Re:Zero",
+        "emoji": "🧊",
+        "rarity": "epic",
+        "chance": 15,
+        "passive": {
+            "power": 20
+        },
+        "description": "Ruh Puck savaşta yardımda kalır, +20 Güç verir."
+    },
+    {
+        "id": "titan_shifter_mini",
+        "name": "Mini Titan",
+        "anime": "AoT",
+        "emoji": "👹",
+        "rarity": "legendary",
+        "chance": 5,
+        "passive": {
+            "hp": 150,
+            "power": 30
+        },
+        "description": "Küçük ama öfkeli! +150 Max HP ve +30 Güç kazanırsın."
+    },
+    {
+        "id": "less_grande_mini",
+        "name": "Mini Menos",
+        "anime": "Bleach",
+        "emoji": "💀",
+        "rarity": "legendary",
+        "chance": 5,
+        "passive": {
+            "power": 40,
+            "defense": 20
+        },
+        "description": "Devleşmiş ruh enerjisi! +40 Güç ve +20 Savunma verir."
+    },
+    {
+        "id": "shadow_soldier",
+        "name": "Gölge Asker",
+        "anime": "Solo Leveling",
+        "emoji": "🌑",
+        "rarity": "mythic",
+        "chance": 2,
+        "passive": {
+            "power": 50,
+            "speed": 30,
+            "onKill": {
+                "gold": 20
+            }
+        },
+        "description": "Sung Jinwoo'nun gölge askeri! +50 Güç +30 Hız ve her öldürmede +20 Altın."
+    },
+    {
+        "id": "kaguya_rabbit",
+        "name": "Kaguya'nın Tavşanı",
+        "anime": "Naruto",
+        "emoji": "🐇",
+        "rarity": "epic",
+        "chance": 15,
+        "passive": {
+            "hp": 100,
+            "healPerTurn": 10
+        },
+        "description": "Her turda +10 HP yenileme ve +100 Max HP."
+    }
+]

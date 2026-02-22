@@ -1,0 +1,660 @@
+[
+    {
+        "id": "zangetsu",
+        "name": "Zangetsu",
+        "owner": "Ichigo",
+        "tier": "legendary",
+        "chance": 5,
+        "emoji": "⚫",
+        "shikai": [
+            {
+                "id": "getsuga_tensho",
+                "name": "Getsuga Tenshō",
+                "damage": 150,
+                "cooldown": 10,
+                "effect": null
+            },
+            {
+                "id": "getsuga_slash",
+                "name": "Getsuga Slash",
+                "damage": 60,
+                "hits": 3,
+                "cooldown": 15,
+                "effect": null
+            },
+            {
+                "id": "black_getsuga",
+                "name": "Black Getsuga",
+                "damage": 250,
+                "cooldown": 30,
+                "effect": "armorPierce"
+            }
+        ],
+        "bankai": [
+            {
+                "id": "tensa_getsuga",
+                "name": "Tensa Getsuga",
+                "damage": 200,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "speed": 30
+                    }
+                }
+            },
+            {
+                "id": "kuroi_getsuga",
+                "name": "Kuroi Getsuga",
+                "damage": 300,
+                "cooldown": 25,
+                "effect": {
+                    "enemy": {
+                        "speed": -20
+                    }
+                }
+            },
+            {
+                "id": "mugetsu",
+                "name": "Mugetsu",
+                "damage": 450,
+                "cooldown": 60,
+                "effect": {
+                    "self": {
+                        "power": -50,
+                        "duration": 2
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "senbonzakura",
+        "name": "Senbonzakura",
+        "owner": "Byakuya",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🌸",
+        "shikai": [
+            {
+                "id": "senbonzakura_base",
+                "name": "Senbonzakura",
+                "damage": 80,
+                "targets": 3,
+                "cooldown": 10
+            },
+            {
+                "id": "petal_storm",
+                "name": "Petal Storm",
+                "damage": 120,
+                "aoe": true,
+                "cooldown": 15
+            },
+            {
+                "id": "blade_barrier",
+                "name": "Blade Barrier",
+                "damage": 0,
+                "cooldown": 25,
+                "effect": {
+                    "self": {
+                        "defense": 40,
+                        "duration": 2
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "kageyoshi",
+                "name": "Kageyoshi",
+                "damage": 100,
+                "targets": 5,
+                "cooldown": 10
+            },
+            {
+                "id": "gokei",
+                "name": "Gokei",
+                "damage": 200,
+                "aoe": true,
+                "cooldown": 20
+            },
+            {
+                "id": "hakuteiken",
+                "name": "Hakuteiken",
+                "damage": 350,
+                "cooldown": 40,
+                "effect": "armorPierce"
+            }
+        ]
+    },
+    {
+        "id": "hyorinmaru",
+        "name": "Hyōrinmaru",
+        "owner": "Toshiro",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "❄️",
+        "shikai": [
+            {
+                "id": "ice_chain",
+                "name": "Ice Chain",
+                "damage": 100,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "speed": -20
+                    }
+                }
+            },
+            {
+                "id": "frozen_spear",
+                "name": "Frozen Spear",
+                "damage": 150,
+                "cooldown": 15,
+                "effect": {
+                    "enemy": {
+                        "frozen": 0.3
+                    }
+                }
+            },
+            {
+                "id": "ice_dragon",
+                "name": "Ice Dragon",
+                "damage": 200,
+                "aoe": true,
+                "cooldown": 25
+            }
+        ],
+        "bankai": [
+            {
+                "id": "daiguren",
+                "name": "Daiguren",
+                "damage": 180,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "speed": -40
+                    }
+                }
+            },
+            {
+                "id": "hyoten_hyakkaso",
+                "name": "Hyōten Hyakkasō",
+                "damage": 250,
+                "aoe": true,
+                "cooldown": 30,
+                "effect": {
+                    "enemy": {
+                        "frozen": 1.0
+                    }
+                }
+            },
+            {
+                "id": "absolute_zero",
+                "name": "Absolute Zero",
+                "damage": 400,
+                "cooldown": 50,
+                "effect": {
+                    "enemy": {
+                        "skip": 1
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "sode_no_shirayuki",
+        "name": "Sode no Shirayuki",
+        "owner": "Rukia",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🌨️",
+        "shikai": [
+            {
+                "id": "tsukishiro",
+                "name": "Tsukishiro",
+                "damage": 120,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "frozen": 0.25
+                    }
+                }
+            },
+            {
+                "id": "hakuren",
+                "name": "Hakuren",
+                "damage": 0,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "defense": 35
+                    },
+                    "enemy": {
+                        "recoil": true
+                    }
+                }
+            },
+            {
+                "id": "shirafune",
+                "name": "Shirafune",
+                "damage": 180,
+                "cooldown": 25,
+                "effect": "armorPierce"
+            }
+        ],
+        "bankai": [
+            {
+                "id": "hakka",
+                "name": "Hakka no Togame",
+                "damage": 200,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "power": -20,
+                        "defense": -20,
+                        "speed": -20
+                    }
+                }
+            },
+            {
+                "id": "white_ice_field",
+                "name": "White Ice Field",
+                "damage": 150,
+                "aoe": true,
+                "cooldown": 25,
+                "effect": {
+                    "enemy": {
+                        "frozen": 1.0
+                    }
+                }
+            },
+            {
+                "id": "togame",
+                "name": "Togame",
+                "damage": 380,
+                "cooldown": 55,
+                "effect": {
+                    "enemy": {
+                        "skip": 2
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "ryujin_jakka",
+        "name": "Ryūjin Jakka",
+        "owner": "Yamamoto",
+        "tier": "legendary",
+        "chance": 5,
+        "emoji": "🔥",
+        "shikai": [
+            {
+                "id": "flame_slash",
+                "name": "Flame Slash",
+                "damage": 140,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "burn": {
+                            "damage": 30,
+                            "duration": 3
+                        }
+                    }
+                }
+            },
+            {
+                "id": "fire_wall",
+                "name": "Fire Wall",
+                "damage": 0,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "defense": 50
+                    },
+                    "enemy": {
+                        "recoil": true
+                    }
+                }
+            },
+            {
+                "id": "inferno",
+                "name": "Inferno",
+                "damage": 220,
+                "aoe": true,
+                "cooldown": 30,
+                "effect": {
+                    "enemy": {
+                        "burn": {
+                            "damage": 30,
+                            "duration": 3
+                        }
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "zanka_east",
+                "name": "Zanka no Tachi: East",
+                "damage": 200,
+                "cooldown": 10,
+                "effect": "armorPierce"
+            },
+            {
+                "id": "zanka_west",
+                "name": "Zanka no Tachi: West",
+                "damage": 280,
+                "aoe": true,
+                "cooldown": 25
+            },
+            {
+                "id": "bankai_flame",
+                "name": "Devasa Alev",
+                "damage": 500,
+                "cooldown": 70,
+                "effect": {
+                    "enemy": {
+                        "burn": {
+                            "damage": 50,
+                            "duration": 1
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "zabimaru",
+        "name": "Zabimaru",
+        "owner": "Renji",
+        "tier": "normal",
+        "chance": 45,
+        "emoji": "🐍",
+        "shikai": [
+            {
+                "id": "snake_whip",
+                "name": "Snake Whip",
+                "damage": 90,
+                "cooldown": 8
+            },
+            {
+                "id": "extend",
+                "name": "Extend",
+                "damage": 120,
+                "cooldown": 12,
+                "effect": {
+                    "enemy": {
+                        "defense": -15
+                    }
+                }
+            },
+            {
+                "id": "crush",
+                "name": "Crush",
+                "damage": 160,
+                "cooldown": 20,
+                "effect": {
+                    "enemy": {
+                        "stun": 0.2
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "hihio_charge",
+                "name": "Hihio Charge",
+                "damage": 180,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "power": 20
+                    }
+                }
+            },
+            {
+                "id": "snake_devour",
+                "name": "Snake Devour",
+                "damage": 240,
+                "cooldown": 25,
+                "effect": {
+                    "self": {
+                        "steal": 0.2
+                    }
+                }
+            },
+            {
+                "id": "baboon_king",
+                "name": "Baboon King",
+                "damage": 350,
+                "aoe": true,
+                "cooldown": 45
+            }
+        ]
+    },
+    {
+        "id": "katen_kyokotsu",
+        "name": "Katen Kyōkotsu",
+        "owner": "Shunsui",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🌺",
+        "shikai": [
+            {
+                "id": "bushogoma",
+                "name": "Bushogoma",
+                "damage": 100,
+                "cooldown": 10,
+                "effect": {
+                    "random": true
+                }
+            },
+            {
+                "id": "takaoni",
+                "name": "Takaoni",
+                "damage": 150,
+                "cooldown": 15
+            },
+            {
+                "id": "irooni",
+                "name": "Irooni",
+                "damage": 0,
+                "cooldown": 25,
+                "effect": {
+                    "self": {
+                        "reflect": 2.0,
+                        "recoil": 1.0
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "karamatsu",
+                "name": "Karamatsu",
+                "damage": 0,
+                "cooldown": 15,
+                "effect": {
+                    "enemy": {
+                        "dotPercent": 0.15,
+                        "duration": 99
+                    }
+                }
+            },
+            {
+                "id": "shirafune_k",
+                "name": "Shirafune",
+                "damage": 250,
+                "cooldown": 30,
+                "effect": {
+                    "enemy": {
+                        "noHeal": 2
+                    }
+                }
+            },
+            {
+                "id": "dangyo",
+                "name": "Dangyo no Shima",
+                "damage": 400,
+                "cooldown": 55,
+                "effect": {
+                    "enemy": {
+                        "clearBuffs": true
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "sogyo_no_kotowari",
+        "name": "Sōgyo no Kotowari",
+        "owner": "Ukitake",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🌊",
+        "shikai": [
+            {
+                "id": "reflect",
+                "name": "Reflect",
+                "damage": 0,
+                "cooldown": 12,
+                "effect": {
+                    "self": {
+                        "reflect": 0.5,
+                        "duration": 1
+                    }
+                }
+            },
+            {
+                "id": "kotowari_slash",
+                "name": "Kotowari Slash",
+                "damage": 110,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "defense": 20
+                    }
+                }
+            },
+            {
+                "id": "full_reflect",
+                "name": "Full Reflect",
+                "damage": 0,
+                "cooldown": 30,
+                "effect": {
+                    "self": {
+                        "reflect": 1.0,
+                        "duration": 1
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "wave_slash",
+                "name": "Wave Slash",
+                "damage": 180,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "healPercent": 0.1
+                    }
+                }
+            },
+            {
+                "id": "twin_dragons",
+                "name": "Twin Dragons",
+                "damage": 150,
+                "targets": 2,
+                "cooldown": 20
+            },
+            {
+                "id": "absolute_reflect",
+                "name": "Absolute Reflect",
+                "damage": 300,
+                "cooldown": 60,
+                "effect": {
+                    "self": {
+                        "reflect": 1.0,
+                        "duration": 1
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "kenpachi_unnamed",
+        "name": "İsimsiz Zanpakuto",
+        "owner": "Kenpachi",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "💀",
+        "shikai": [
+            {
+                "id": "raw_power",
+                "name": "Raw Power",
+                "damage": 130,
+                "cooldown": 8,
+                "effect": {
+                    "self": {
+                        "power": 30,
+                        "defense": -20
+                    }
+                }
+            },
+            {
+                "id": "bloodlust",
+                "name": "Bloodlust",
+                "damage": 150,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "powerScaleHp": true
+                    }
+                }
+            },
+            {
+                "id": "berserker",
+                "name": "Berserker",
+                "damage": 200,
+                "cooldown": 25,
+                "effect": {
+                    "self": {
+                        "power": 50,
+                        "defense": -999,
+                        "duration": 2
+                    }
+                }
+            }
+        ],
+        "bankai": [
+            {
+                "id": "nozarashi",
+                "name": "Nozarashi",
+                "damage": 220,
+                "cooldown": 10,
+                "effect": "armorPierce"
+            },
+            {
+                "id": "frenzy",
+                "name": "Frenzy",
+                "damage": 100,
+                "hits": 3,
+                "cooldown": 25,
+                "effect": {
+                    "self": {
+                        "powerStack": true
+                    }
+                }
+            },
+            {
+                "id": "rage",
+                "name": "Rage",
+                "damage": 500,
+                "cooldown": 60,
+                "condition": "hpBelow30"
+            }
+        ]
+    }
+]

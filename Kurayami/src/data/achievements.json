@@ -1,0 +1,197 @@
+[
+    {
+        "id": "first_blood",
+        "name": "İlk Kan 🩸",
+        "description": "İlk NPC'yi öldür",
+        "condition": "totalKills >= 1",
+        "reward": {
+            "diamond": 50,
+            "title": "Başlangıç"
+        }
+    },
+    {
+        "id": "slayer_10",
+        "name": "Avcı 🗡️",
+        "description": "10 NPC öldür",
+        "condition": "totalKills >= 10",
+        "reward": {
+            "diamond": 100
+        }
+    },
+    {
+        "id": "slayer_100",
+        "name": "Usta Avcı ⚔️",
+        "description": "100 NPC öldür",
+        "condition": "totalKills >= 100",
+        "reward": {
+            "diamond": 300,
+            "title": "Usta Avcı"
+        }
+    },
+    {
+        "id": "slayer_1000",
+        "name": "Efsane Avcı 🏆",
+        "description": "1000 NPC öldür",
+        "condition": "totalKills >= 1000",
+        "reward": {
+            "diamond": 1000,
+            "title": "Efsane Avcı"
+        }
+    },
+    {
+        "id": "first_boss",
+        "name": "Boss Katili 💀",
+        "description": "İlk boss'u öldür",
+        "condition": "totalBossKills >= 1",
+        "reward": {
+            "diamond": 200,
+            "title": "Boss Katili"
+        }
+    },
+    {
+        "id": "boss_master",
+        "name": "Boss Ustası 👑",
+        "description": "50 boss öldür",
+        "condition": "totalBossKills >= 50",
+        "reward": {
+            "diamond": 800,
+            "title": "Boss Ustası"
+        }
+    },
+    {
+        "id": "level_10",
+        "name": "Yükseliş 📈",
+        "description": "Level 10'a ulaş",
+        "condition": "level >= 10",
+        "reward": {
+            "gold": 1000,
+            "diamond": 100
+        }
+    },
+    {
+        "id": "level_50",
+        "name": "Güçlü Savaşçı 💪",
+        "description": "Level 50'ye ulaş",
+        "condition": "level >= 50",
+        "reward": {
+            "diamond": 500,
+            "title": "Güçlü Savaşçı"
+        }
+    },
+    {
+        "id": "level_100",
+        "name": "Efsane 🌟",
+        "description": "Level 100'e ulaş",
+        "condition": "level >= 100",
+        "reward": {
+            "diamond": 2000,
+            "title": "Efsane"
+        }
+    },
+    {
+        "id": "pvp_first_win",
+        "name": "İlk Zafer ⚔️",
+        "description": "İlk PvP savaşını kazan",
+        "condition": "pvpWins >= 1",
+        "reward": {
+            "diamond": 75,
+            "title": "Düellocu"
+        }
+    },
+    {
+        "id": "pvp_10_wins",
+        "name": "PvP Ustası 🥊",
+        "description": "10 PvP kazanımı",
+        "condition": "pvpWins >= 10",
+        "reward": {
+            "diamond": 300
+        }
+    },
+    {
+        "id": "streak_5",
+        "name": "5 Kazanma Serisi 🔥",
+        "description": "5 savaşı arka arkaya kazan",
+        "condition": "bestWinStreak >= 5",
+        "reward": {
+            "diamond": 200,
+            "title": "Unstoppable"
+        }
+    },
+    {
+        "id": "rich",
+        "name": "Zengin 💰",
+        "description": "50.000 Altın biriktir",
+        "condition": "gold >= 50000",
+        "reward": {
+            "diamond": 500,
+            "title": "Tüccar"
+        }
+    },
+    {
+        "id": "diamond_collector",
+        "name": "Elmas Avcısı 💎",
+        "description": "1000 Elmas biriktir",
+        "condition": "diamond >= 1000",
+        "reward": {
+            "title": "Elmas Avcısı"
+        }
+    },
+    {
+        "id": "clan_founder",
+        "name": "Kurucu 🏰",
+        "description": "Bir klan kur",
+        "condition": "clanOwner",
+        "reward": {
+            "diamond": 100,
+            "title": "Kurucu"
+        }
+    },
+    {
+        "id": "got_pet",
+        "name": "Evcil Hayvan Sahibi 🐾",
+        "description": "İlk petini edin",
+        "condition": "hasPet",
+        "reward": {
+            "diamond": 50
+        }
+    },
+    {
+        "id": "gold_ranked",
+        "name": "Gold Rütbesi 🥇",
+        "description": "Gold rankına ulaş",
+        "condition": "rankedTier === 'gold'",
+        "reward": {
+            "diamond": 400,
+            "title": "Gold Rütbeli"
+        }
+    },
+    {
+        "id": "grandmaster",
+        "name": "Grandmaster 🏆",
+        "description": "Grandmaster rankına ulaş",
+        "condition": "rankedTier === 'grandmaster'",
+        "reward": {
+            "diamond": 2000,
+            "title": "Grandmaster"
+        }
+    },
+    {
+        "id": "damage_1m",
+        "name": "Yıkım Makinesi 💥",
+        "description": "Toplam 1.000.000 hasar ver",
+        "condition": "totalDamageDealt >= 1000000",
+        "reward": {
+            "diamond": 500,
+            "title": "Yıkım Makinesi"
+        }
+    },
+    {
+        "id": "season_tier_10",
+        "name": "Season Müdavimi 🎫",
+        "description": "Season pass tier 10'a ulaş",
+        "condition": "seasonPassTier >= 10",
+        "reward": {
+            "diamond": 300
+        }
+    }
+]

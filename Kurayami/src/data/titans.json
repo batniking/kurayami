@@ -1,0 +1,359 @@
+[
+    {
+        "id": "attack_titan",
+        "name": "Saldırı Titanı",
+        "owner": "Eren",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "⚔️",
+        "skills": [
+            {
+                "id": "titan_punch",
+                "name": "Titan Yumruğu",
+                "damage": 150,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "stun": 0.25
+                    }
+                }
+            },
+            {
+                "id": "hardening",
+                "name": "Sertleştirme",
+                "damage": 0,
+                "cooldown": 20,
+                "effect": {
+                    "self": {
+                        "defense": 50,
+                        "duration": 2
+                    }
+                }
+            },
+            {
+                "id": "freedom_scream",
+                "name": "Özgürlük Çığlığı",
+                "damage": 350,
+                "cooldown": 55,
+                "effect": {
+                    "enemy": {
+                        "clearBuffs": true
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "armored_titan",
+        "name": "Zırhlı Titan",
+        "owner": "Reiner",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🛡️",
+        "skills": [
+            {
+                "id": "armor_rush",
+                "name": "Zırh Koşusu",
+                "damage": 130,
+                "cooldown": 10,
+                "effect": "armorPierce"
+            },
+            {
+                "id": "full_armor",
+                "name": "Tam Zırh",
+                "damage": 0,
+                "cooldown": 20,
+                "effect": {
+                    "self": {
+                        "defense": 80,
+                        "power": -20,
+                        "duration": 2
+                    }
+                }
+            },
+            {
+                "id": "armor_breaker",
+                "name": "Zırh Kırıcı",
+                "damage": 300,
+                "cooldown": 50,
+                "effect": {
+                    "enemy": {
+                        "defense": -40
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "colossal_titan",
+        "name": "Colossal Titan",
+        "owner": "Bertholdt",
+        "tier": "legendary",
+        "chance": 5,
+        "emoji": "💨",
+        "skills": [
+            {
+                "id": "steam_burst",
+                "name": "Buhar Patlaması",
+                "damage": 160,
+                "aoe": true,
+                "cooldown": 12,
+                "effect": {
+                    "enemy": {
+                        "speed": -30
+                    }
+                }
+            },
+            {
+                "id": "giant_step",
+                "name": "Dev Adım",
+                "damage": 200,
+                "aoe": true,
+                "cooldown": 25
+            },
+            {
+                "id": "nuclear_blast",
+                "name": "Nükleer Patlama",
+                "damage": 500,
+                "aoe": true,
+                "cooldown": 70
+            }
+        ]
+    },
+    {
+        "id": "female_titan",
+        "name": "Dişi Titan",
+        "owner": "Annie",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "💎",
+        "skills": [
+            {
+                "id": "crystal_armor",
+                "name": "Kristal Zırh",
+                "damage": 0,
+                "cooldown": 12,
+                "effect": {
+                    "self": {
+                        "defense": 60,
+                        "recoil": 0.2
+                    }
+                }
+            },
+            {
+                "id": "combat_technique",
+                "name": "Dövüş Tekniği",
+                "damage": 170,
+                "cooldown": 20,
+                "effect": {
+                    "enemy": {
+                        "defense": -25
+                    }
+                }
+            },
+            {
+                "id": "full_crystal",
+                "name": "Tam Kristal",
+                "damage": 400,
+                "cooldown": 60,
+                "effect": {
+                    "self": {
+                        "invincible": 1,
+                        "nextAttack": 2.0
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "jaw_titan_porco",
+        "name": "Savaş Çekici Titan",
+        "owner": "Porco",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🦴",
+        "skills": [
+            {
+                "id": "jaw_break",
+                "name": "Çene Kırma",
+                "damage": 140,
+                "cooldown": 10,
+                "effect": {
+                    "armorPiercePercent": 0.4
+                }
+            },
+            {
+                "id": "rapid_strike",
+                "name": "Hızlı Saldırı",
+                "damage": 70,
+                "hits": 3,
+                "cooldown": 15
+            },
+            {
+                "id": "titan_jaw",
+                "name": "Titan Çenesi",
+                "damage": 320,
+                "cooldown": 45,
+                "effect": "armorPierce"
+            }
+        ]
+    },
+    {
+        "id": "cart_titan",
+        "name": "Cart Titan",
+        "owner": "Pieck",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🏎️",
+        "skills": [
+            {
+                "id": "swift_pass",
+                "name": "Hızlı Geçiş",
+                "damage": 100,
+                "cooldown": 8,
+                "effect": {
+                    "self": {
+                        "speed": 50
+                    }
+                }
+            },
+            {
+                "id": "heavy_fire",
+                "name": "Ağır Ateş",
+                "damage": 150,
+                "cooldown": 15,
+                "effect": {
+                    "enemy": {
+                        "speed": -20
+                    }
+                }
+            },
+            {
+                "id": "relentless",
+                "name": "Kesintisiz Saldırı",
+                "damage": 80,
+                "hits": 4,
+                "cooldown": 40
+            }
+        ]
+    },
+    {
+        "id": "beast_titan",
+        "name": "Beast Titan",
+        "owner": "Zeke",
+        "tier": "legendary",
+        "chance": 5,
+        "emoji": "🦍",
+        "skills": [
+            {
+                "id": "rock_throw",
+                "name": "Taş Fırlatma",
+                "damage": 160,
+                "cooldown": 10,
+                "effect": {
+                    "enemy": {
+                        "stun": 0.3
+                    }
+                }
+            },
+            {
+                "id": "titan_summon",
+                "name": "Titan Çağırma",
+                "damage": 50,
+                "cooldown": 25,
+                "effect": {
+                    "dot": {
+                        "damage": 50,
+                        "duration": 3
+                    }
+                }
+            },
+            {
+                "id": "scream",
+                "name": "Çığlık",
+                "damage": 400,
+                "cooldown": 60,
+                "effect": {
+                    "enemy": {
+                        "clearBuffs": true
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "jaw_titan",
+        "name": "Jaw Titan",
+        "tier": "rare",
+        "chance": 35,
+        "emoji": "🦷",
+        "skills": [
+            {
+                "id": "jaw_attack",
+                "name": "Çene Saldırısı",
+                "damage": 130,
+                "cooldown": 8,
+                "effect": "armorPierce"
+            },
+            {
+                "id": "speed_burst",
+                "name": "Hız Patlaması",
+                "damage": 150,
+                "cooldown": 15,
+                "effect": {
+                    "self": {
+                        "speed": 40
+                    }
+                }
+            },
+            {
+                "id": "titan_bite",
+                "name": "Titan Isırığı",
+                "damage": 300,
+                "cooldown": 40,
+                "effect": {
+                    "self": {
+                        "steal": 0.15
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": "warhammer_titan",
+        "name": "Warhammer Titan",
+        "owner": "Tybur",
+        "tier": "epic",
+        "chance": 15,
+        "emoji": "🔨",
+        "skills": [
+            {
+                "id": "armor_create",
+                "name": "Zırh Oluşturma",
+                "damage": 120,
+                "cooldown": 10,
+                "effect": {
+                    "self": {
+                        "defense": 45
+                    }
+                }
+            },
+            {
+                "id": "weapon_create",
+                "name": "Silah Yaratma",
+                "damage": 160,
+                "cooldown": 20,
+                "effect": {
+                    "random": true
+                }
+            },
+            {
+                "id": "war_hammer",
+                "name": "Savaş Çekici",
+                "damage": 380,
+                "aoe": true,
+                "cooldown": 55
+            }
+        ]
+    }
+]

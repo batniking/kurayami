@@ -1,0 +1,652 @@
+{
+    "general": [
+        {
+            "id": "iron_sword",
+            "name": "Iron Sword",
+            "tier": "common",
+            "emoji": "🗡️",
+            "type": "weapon",
+            "stats": {
+                "power": 5
+            },
+            "race": null
+        },
+        {
+            "id": "wooden_blade",
+            "name": "Wooden Blade",
+            "tier": "common",
+            "emoji": "🪵",
+            "type": "weapon",
+            "stats": {
+                "power": 3
+            },
+            "race": null
+        },
+        {
+            "id": "rusty_dagger",
+            "name": "Rusty Dagger",
+            "tier": "common",
+            "emoji": "🔪",
+            "type": "weapon",
+            "stats": {
+                "power": 4,
+                "speed": 2
+            },
+            "race": null
+        },
+        {
+            "id": "steel_sword",
+            "name": "Steel Sword",
+            "tier": "uncommon",
+            "emoji": "⚔️",
+            "type": "weapon",
+            "stats": {
+                "power": 12
+            },
+            "race": null
+        },
+        {
+            "id": "shadow_blade",
+            "name": "Shadow Blade",
+            "tier": "uncommon",
+            "emoji": "🌑",
+            "type": "weapon",
+            "stats": {
+                "power": 10,
+                "speed": 5
+            },
+            "race": null
+        },
+        {
+            "id": "crescent_blade",
+            "name": "Crescent Blade",
+            "tier": "uncommon",
+            "emoji": "🌙",
+            "type": "weapon",
+            "stats": {
+                "power": 11,
+                "defense": 3
+            },
+            "race": null
+        },
+        {
+            "id": "dragon_fang",
+            "name": "Dragon Fang",
+            "tier": "rare",
+            "emoji": "🐉",
+            "type": "weapon",
+            "stats": {
+                "power": 25,
+                "speed": 8
+            },
+            "race": null
+        },
+        {
+            "id": "blood_edge",
+            "name": "Blood Edge",
+            "tier": "rare",
+            "emoji": "🩸",
+            "type": "weapon",
+            "stats": {
+                "power": 28
+            },
+            "race": null
+        },
+        {
+            "id": "thunder_blade",
+            "name": "Thunder Blade",
+            "tier": "rare",
+            "emoji": "⚡",
+            "type": "weapon",
+            "stats": {
+                "power": 22,
+                "speed": 12
+            },
+            "race": null
+        },
+        {
+            "id": "phantom_sword",
+            "name": "Phantom Sword",
+            "tier": "rare",
+            "emoji": "👻",
+            "type": "weapon",
+            "stats": {
+                "power": 26,
+                "defense": 8
+            },
+            "race": null
+        },
+        {
+            "id": "void_cutter",
+            "name": "Void Cutter",
+            "tier": "rare",
+            "emoji": "🌀",
+            "type": "weapon",
+            "stats": {
+                "power": 24,
+                "speed": 10
+            },
+            "race": null
+        },
+        {
+            "id": "demon_slayer_blade",
+            "name": "Demon Slayer Blade",
+            "tier": "epic",
+            "emoji": "🔥",
+            "type": "weapon",
+            "stats": {
+                "power": 45,
+                "speed": 15
+            },
+            "race": null
+        },
+        {
+            "id": "soul_eater",
+            "name": "Soul Eater",
+            "tier": "epic",
+            "emoji": "💜",
+            "type": "weapon",
+            "stats": {
+                "power": 48,
+                "defense": 10
+            },
+            "race": null
+        },
+        {
+            "id": "dark_requiem",
+            "name": "Dark Requiem",
+            "tier": "epic",
+            "emoji": "🖤",
+            "type": "weapon",
+            "stats": {
+                "power": 50,
+                "speed": 18
+            },
+            "race": null
+        },
+        {
+            "id": "cursed_edge",
+            "name": "Cursed Edge",
+            "tier": "epic",
+            "emoji": "⛓️",
+            "type": "weapon",
+            "stats": {
+                "power": 47,
+                "hp": 50
+            },
+            "race": null
+        },
+        {
+            "id": "heavens_split",
+            "name": "Heaven's Split",
+            "tier": "epic",
+            "emoji": "✨",
+            "type": "weapon",
+            "stats": {
+                "power": 52,
+                "defense": 12
+            },
+            "race": null
+        },
+        {
+            "id": "divine_executioner",
+            "name": "Divine Executioner",
+            "tier": "legendary",
+            "emoji": "⭐",
+            "type": "weapon",
+            "stats": {
+                "power": 80,
+                "speed": 25,
+                "defense": 20
+            },
+            "race": null
+        },
+        {
+            "id": "chaos_breaker",
+            "name": "Chaos Breaker",
+            "tier": "legendary",
+            "emoji": "🌪️",
+            "type": "weapon",
+            "stats": {
+                "power": 85,
+                "hp": 100
+            },
+            "race": null
+        },
+        {
+            "id": "eternity_blade",
+            "name": "Eternity Blade",
+            "tier": "legendary",
+            "emoji": "💫",
+            "type": "weapon",
+            "stats": {
+                "power": 82,
+                "speed": 30
+            },
+            "race": null
+        },
+        {
+            "id": "god_slash",
+            "name": "God Slash",
+            "tier": "legendary",
+            "emoji": "🌟",
+            "type": "weapon",
+            "stats": {
+                "power": 90,
+                "defense": 25
+            },
+            "race": null
+        },
+        {
+            "id": "void_god_blade",
+            "name": "Void God Blade",
+            "tier": "mythic",
+            "emoji": "🔮",
+            "type": "weapon",
+            "stats": {
+                "power": 130,
+                "speed": 40,
+                "defense": 35
+            },
+            "race": null
+        },
+        {
+            "id": "primordial_edge",
+            "name": "Primordial Edge",
+            "tier": "mythic",
+            "emoji": "🌌",
+            "type": "weapon",
+            "stats": {
+                "power": 140,
+                "hp": 200,
+                "defense": 40
+            },
+            "race": null
+        }
+    ],
+    "armors": [
+        {
+            "id": "scout_set_head",
+            "name": "Scout Başlığı",
+            "set": "scout",
+            "tier": "rare",
+            "emoji": "🪖",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "defense": 15,
+                "speed": 15
+            },
+            "setBonus": {
+                "speed": 50,
+                "odmBonus": 0.15
+            }
+        },
+        {
+            "id": "scout_set_chest",
+            "name": "Scout Zırhı",
+            "set": "scout",
+            "tier": "rare",
+            "emoji": "🦺",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "defense": 20,
+                "speed": 20
+            },
+            "setBonus": {
+                "speed": 50
+            }
+        },
+        {
+            "id": "scout_set_legs",
+            "name": "Scout Pantolonu",
+            "set": "scout",
+            "tier": "rare",
+            "emoji": "👖",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "defense": 15,
+                "speed": 15
+            },
+            "setBonus": {
+                "speed": 50
+            }
+        },
+        {
+            "id": "shinigami_head",
+            "name": "Shinigami Kaskı",
+            "set": "shinigami",
+            "tier": "epic",
+            "emoji": "⬛",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "defense": 25
+            },
+            "setBonus": {
+                "zanpakutoBonus": 0.2
+            }
+        },
+        {
+            "id": "shinigami_chest",
+            "name": "Shinigami Döşlüğü",
+            "set": "shinigami",
+            "tier": "epic",
+            "emoji": "🥷",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "defense": 35
+            },
+            "setBonus": {
+                "zanpakutoBonus": 0.2
+            }
+        },
+        {
+            "id": "shinigami_legs",
+            "name": "Shinigami Pantolonu",
+            "set": "shinigami",
+            "tier": "epic",
+            "emoji": "👘",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "defense": 28
+            },
+            "setBonus": {
+                "zanpakutoBonus": 0.2
+            }
+        },
+        {
+            "id": "ichigo_head",
+            "name": "Ichigo Kaskı",
+            "set": "ichigo",
+            "tier": "legendary",
+            "emoji": "🟠",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "power": 20,
+                "defense": 30
+            },
+            "setBonus": {
+                "getsuBonus": 0.3
+            }
+        },
+        {
+            "id": "ichigo_chest",
+            "name": "Ichigo Döşlüğü",
+            "set": "ichigo",
+            "tier": "legendary",
+            "emoji": "🟠",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "power": 25,
+                "defense": 40
+            },
+            "setBonus": {
+                "getsuBonus": 0.3
+            }
+        },
+        {
+            "id": "ichigo_legs",
+            "name": "Ichigo Pantolonu",
+            "set": "ichigo",
+            "tier": "legendary",
+            "emoji": "🟠",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "power": 18,
+                "defense": 28
+            },
+            "setBonus": {
+                "getsuBonus": 0.3
+            }
+        },
+        {
+            "id": "gojo_head",
+            "name": "Gojo Bandanası",
+            "set": "gojo",
+            "tier": "legendary",
+            "emoji": "🕶️",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "defense": 40,
+                "speed": 20
+            },
+            "setBonus": {
+                "critBonus": 0.3,
+                "blockChance": 0.15
+            }
+        },
+        {
+            "id": "gojo_chest",
+            "name": "Gojo Ceketi",
+            "set": "gojo",
+            "tier": "legendary",
+            "emoji": "🩵",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "defense": 50,
+                "speed": 25
+            },
+            "setBonus": {
+                "critBonus": 0.3
+            }
+        },
+        {
+            "id": "gojo_legs",
+            "name": "Gojo Pantolonu",
+            "set": "gojo",
+            "tier": "legendary",
+            "emoji": "🩵",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "defense": 38,
+                "speed": 18
+            },
+            "setBonus": {
+                "critBonus": 0.3
+            }
+        },
+        {
+            "id": "shadow_monarch_head",
+            "name": "Shadow Monarch Tacı",
+            "set": "shadow_monarch",
+            "tier": "mythic",
+            "emoji": "👑",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "power": 50,
+                "defense": 50,
+                "hp": 100
+            },
+            "setBonus": {
+                "onKillHeal": 50,
+                "shadowBonus": 100
+            }
+        },
+        {
+            "id": "shadow_monarch_chest",
+            "name": "Shadow Monarch Zırhı",
+            "set": "shadow_monarch",
+            "tier": "mythic",
+            "emoji": "🌑",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "power": 60,
+                "defense": 65,
+                "hp": 150
+            },
+            "setBonus": {
+                "onKillHeal": 50
+            }
+        },
+        {
+            "id": "shadow_monarch_legs",
+            "name": "Shadow Monarch Pantolonu",
+            "set": "shadow_monarch",
+            "tier": "mythic",
+            "emoji": "🌑",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "power": 45,
+                "defense": 55,
+                "hp": 100
+            },
+            "setBonus": {
+                "onKillHeal": 50
+            }
+        }
+    ],
+    "accessories": [
+        {
+            "id": "power_ring",
+            "name": "Güç Yüzüğü",
+            "tier": "common",
+            "emoji": "💍",
+            "type": "accessory",
+            "slot": "ring",
+            "stats": {
+                "power": 5
+            }
+        },
+        {
+            "id": "defense_necklace",
+            "name": "Savunma Kolyesi",
+            "tier": "common",
+            "emoji": "📿",
+            "type": "accessory",
+            "slot": "necklace",
+            "stats": {
+                "defense": 5
+            }
+        },
+        {
+            "id": "speed_ring",
+            "name": "Hız Yüzüğü",
+            "tier": "rare",
+            "emoji": "💨",
+            "type": "accessory",
+            "slot": "ring",
+            "stats": {
+                "speed": 20
+            }
+        },
+        {
+            "id": "hp_necklace",
+            "name": "Can Kolyesi",
+            "tier": "rare",
+            "emoji": "❤️",
+            "type": "accessory",
+            "slot": "necklace",
+            "stats": {
+                "hp": 80
+            }
+        },
+        {
+            "id": "dragons_ring",
+            "name": "Dragon Yüzüğü",
+            "tier": "epic",
+            "emoji": "🐲",
+            "type": "accessory",
+            "slot": "ring",
+            "stats": {
+                "power": 30,
+                "speed": 10
+            }
+        },
+        {
+            "id": "aura_necklace",
+            "name": "Ruhsal Kolye",
+            "tier": "legendary",
+            "emoji": "✨",
+            "type": "accessory",
+            "slot": "necklace",
+            "stats": {
+                "power": 25,
+                "defense": 25,
+                "speed": 25,
+                "hp": 100
+            }
+        }
+    ],
+    "pots": [
+        {
+            "id": "small_hp_pot",
+            "name": "Küçük HP Potu",
+            "tier": "common",
+            "emoji": "🧪",
+            "type": "pot",
+            "effect": {
+                "heal": 50
+            }
+        },
+        {
+            "id": "medium_hp_pot",
+            "name": "Orta HP Potu",
+            "tier": "uncommon",
+            "emoji": "💊",
+            "type": "pot",
+            "effect": {
+                "heal": 150
+            }
+        },
+        {
+            "id": "large_hp_pot",
+            "name": "Büyük HP Potu",
+            "tier": "rare",
+            "emoji": "🔵",
+            "type": "pot",
+            "effect": {
+                "heal": 350
+            }
+        },
+        {
+            "id": "elixir",
+            "name": "Elixir",
+            "tier": "epic",
+            "emoji": "💉",
+            "type": "pot",
+            "effect": {
+                "healFull": true
+            }
+        },
+        {
+            "id": "power_boost",
+            "name": "Güç Takviyesi",
+            "tier": "rare",
+            "emoji": "🔴",
+            "type": "pot",
+            "effect": {
+                "buff": {
+                    "power": 30,
+                    "duration": 3
+                }
+            }
+        },
+        {
+            "id": "defense_boost",
+            "name": "Savunma Takviyesi",
+            "tier": "rare",
+            "emoji": "🔵",
+            "type": "pot",
+            "effect": {
+                "buff": {
+                    "defense": 30,
+                    "duration": 3
+                }
+            }
+        }
+    ]
+}
