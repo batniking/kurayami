@@ -7,47 +7,69 @@ const { addExp } = require('../utils/levelSystem');
 const { rollNpcDrop } = require('../utils/dropSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 
+const RACE_SKILLS = require('../data/race_skills.json');
+
+const TIER_COLOR = { weak: 0x2ecc71, medium: 0xe67e22, strong: 0xe74c3c };
+
 const NPCS = [
-    { id: 'weak_hollow', name: 'Zayıf Hollow', tier: 'weak', emoji: '👻', hp: 150, maxHp: 150, power: 20, defense: 10, speed: 15, exp: 30, race: 'hollow' },
-    { id: 'hollow_soldier', name: 'Hollow Asker', tier: 'weak', emoji: '💀', hp: 250, maxHp: 250, power: 30, defense: 15, speed: 20, exp: 50, race: 'hollow' },
-    { id: 'pure_titan', name: 'Saf Titan', tier: 'weak', emoji: '👹', hp: 400, maxHp: 400, power: 45, defense: 20, speed: 10, exp: 80, race: 'titan' },
-    { id: 'soul_reaper', name: 'Soul Reaper Grunt', tier: 'medium', emoji: '⚫', hp: 600, maxHp: 600, power: 60, defense: 35, speed: 40, exp: 120, race: 'shinigami' },
-    { id: 'quincy_soldier', name: 'Quincy Askeri', tier: 'medium', emoji: '🏹', hp: 550, maxHp: 550, power: 65, defense: 30, speed: 50, exp: 130, race: 'quincy' },
-    { id: 'shadow_soldier', name: 'Gölge Asker', tier: 'medium', emoji: '🌑', hp: 700, maxHp: 700, power: 70, defense: 40, speed: 45, exp: 150, race: null },
-    { id: 'captain_reaper', name: 'Captain Soul Reaper', tier: 'strong', emoji: '⚡', hp: 1200, maxHp: 1200, power: 100, defense: 70, speed: 80, exp: 250, race: 'shinigami' },
-    { id: 'sternritter', name: 'Sternritter', tier: 'strong', emoji: '✦', hp: 1100, maxHp: 1100, power: 95, defense: 65, speed: 85, exp: 240, race: 'quincy' },
+    // ── ZAYIF ──
+    { id: 'weak_hollow', name: 'Zayıf Hollow', tier: 'weak', emoji: '👻', hp: 150, maxHp: 150, power: 20, defense: 10, speed: 15, exp: 30, gold: [30, 80], race: 'hollow' },
+    { id: 'hollow_soldier', name: 'Hollow Askeri', tier: 'weak', emoji: '💀', hp: 260, maxHp: 260, power: 30, defense: 15, speed: 20, exp: 50, gold: [50, 120], race: 'hollow' },
+    { id: 'low_curse', name: 'Düşük Lanet Ruhu', tier: 'weak', emoji: '👁️', hp: 200, maxHp: 200, power: 25, defense: 12, speed: 18, exp: 40, gold: [40, 100], race: null },
+    { id: 'gate_goblin', name: 'Kapı Goblini', tier: 'weak', emoji: '👺', hp: 180, maxHp: 180, power: 22, defense: 8, speed: 25, exp: 35, gold: [35, 90], race: null },
+    { id: 'pure_titan', name: 'Saf Titan', tier: 'weak', emoji: '👹', hp: 400, maxHp: 400, power: 45, defense: 20, speed: 10, exp: 80, gold: [70, 150], race: 'titan' },
+    { id: 'hollow_grunt', name: 'Hollow Piyonu', tier: 'weak', emoji: '🦴', hp: 220, maxHp: 220, power: 28, defense: 18, speed: 16, exp: 45, gold: [45, 110], race: 'hollow' },
+    // ── ORTA ──
+    { id: 'soul_reaper', name: 'Soul Reaper Neferi', tier: 'medium', emoji: '⚫', hp: 600, maxHp: 600, power: 60, defense: 35, speed: 40, exp: 120, gold: [150, 300], race: 'shinigami' },
+    { id: 'quincy_soldier', name: 'Quincy Askeri', tier: 'medium', emoji: '🏹', hp: 550, maxHp: 550, power: 65, defense: 30, speed: 50, exp: 130, gold: [160, 320], race: 'quincy' },
+    { id: 'shadow_soldier', name: 'Gölge Asker', tier: 'medium', emoji: '🌑', hp: 700, maxHp: 700, power: 70, defense: 40, speed: 45, exp: 150, gold: [180, 350], race: null },
+    { id: 'medium_curse', name: 'Lanet Ruhu (Özel Seviye)', tier: 'medium', emoji: '🫧', hp: 650, maxHp: 650, power: 68, defense: 38, speed: 42, exp: 140, gold: [170, 330], race: null },
+    { id: 'adjuchas_weak', name: 'Küçük Adjuchas', tier: 'medium', emoji: '🦂', hp: 750, maxHp: 750, power: 75, defense: 45, speed: 50, exp: 160, gold: [200, 380], race: 'hollow' },
+    { id: 'b_rank_hunter', name: 'B-Rank Avcısı', tier: 'medium', emoji: '🗡️', hp: 580, maxHp: 580, power: 62, defense: 40, speed: 55, exp: 125, gold: [155, 310], race: null },
+    // ── GÜÇLÜ ──
+    { id: 'captain_reaper', name: 'Kaptan Soul Reaper', tier: 'strong', emoji: '⚡', hp: 1200, maxHp: 1200, power: 100, defense: 70, speed: 80, exp: 250, gold: [400, 700], race: 'shinigami' },
+    { id: 'sternritter', name: 'Sternritter', tier: 'strong', emoji: '✦', hp: 1100, maxHp: 1100, power: 95, defense: 65, speed: 85, exp: 240, gold: [380, 680], race: 'quincy' },
+    { id: 'special_curse', name: 'Özel Lanet Ruhu', tier: 'strong', emoji: '🌀', hp: 1300, maxHp: 1300, power: 110, defense: 75, speed: 70, exp: 270, gold: [420, 750], race: null },
+    { id: 'menos_grande', name: 'Menos Grande', tier: 'strong', emoji: '👿', hp: 1500, maxHp: 1500, power: 105, defense: 80, speed: 60, exp: 280, gold: [450, 800], race: 'hollow' },
+    { id: 'a_rank_hunter', name: 'A-Rank Avcısı', tier: 'strong', emoji: '🔰', hp: 1000, maxHp: 1000, power: 90, defense: 60, speed: 90, exp: 220, gold: [350, 650], race: null },
+    { id: 'scout_captain', name: 'Survey Corps Kaptanı', tier: 'strong', emoji: '🪖', hp: 900, maxHp: 900, power: 85, defense: 55, speed: 95, exp: 200, gold: [320, 600], race: null },
+    { id: 'volt_curse', name: 'Lanet Ruhu (Sınıf 1)', tier: 'strong', emoji: '☠️', hp: 1400, maxHp: 1400, power: 115, defense: 85, speed: 75, exp: 290, gold: [460, 820], race: null },
+    { id: 'phantom_soldier', name: 'Phantom Ordu Askeri', tier: 'strong', emoji: '👤', hp: 1050, maxHp: 1050, power: 92, defense: 62, speed: 88, exp: 230, gold: [360, 660], race: null },
 ];
 
 function pickNpc(playerLevel) {
-    // Level'e göre uygun NPC'ler
     let pool;
     if (playerLevel < 15) pool = NPCS.filter(n => n.tier === 'weak');
-    else if (playerLevel < 40) pool = NPCS.filter(n => n.tier !== 'strong').concat(NPCS.filter(n => n.tier === 'weak'));
+    else if (playerLevel < 40) pool = NPCS.filter(n => n.tier !== 'strong');
     else pool = NPCS;
-    return pool[Math.floor(Math.random() * pool.length)];
+    return { ...pool[Math.floor(Math.random() * pool.length)] };
 }
 
 function getPlayerSkills(player) {
-    if (player.raceForm) {
-        const race = player.race;
-        if (race === 'shinigami') {
-            const zanpakutos = require('../data/zanpakutos.json');
-            const z = zanpakutos.find(z => z.id === player.raceData?.zanpakuto);
-            if (z) return player.raceEvolution >= 2 ? z.bankai : z.shikai;
-        }
-        if (race === 'hollow') {
-            const espadas = require('../data/espadas.json');
-            const e = espadas.find(e => e.id === player.raceData?.espada);
-            if (e) return e.skills;
-        }
-        if (race === 'titan') {
-            const titans = require('../data/titans.json');
-            const t = titans.find(t => t.id === player.raceData?.titan);
-            if (t) return t.skills;
-        }
+    const race = player.race;
+    const evolution = player.raceEvolution || 0;
+    if (!race || evolution === 0) return [];
+
+    if (race === 'shinigami') {
+        const id = player.raceData?.zanpakuto || 'default_shinigami';
+        const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
+        return z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
     }
-    return null;
+    if (race === 'hollow') {
+        const id = player.raceData?.espada || 'default_hollow';
+        const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
+        return e?.skills || [];
+    }
+    if (race === 'quincy') {
+        const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
+        if (!q) return [];
+        if (evolution >= 3) return q.yhwach;
+        if (evolution >= 2) return q.sternritter;
+        return q.vollstandig;
+    }
+    return [];
 }
+
 
 module.exports = {
     name: 'hunt',
@@ -72,25 +94,27 @@ module.exports = {
         let battleLog = '_Savaş başlıyor!_';
         const color = getColor(player.race);
 
+        const skillCooldowns = skills.map(() => 0);
+
         const buildButtons = (disabled = false) => {
             const attackBtn = new ButtonBuilder().setCustomId('hunt:attack').setLabel('⚔️ Saldır').setStyle(ButtonStyle.Danger).setDisabled(disabled);
             const fleeBtn = new ButtonBuilder().setCustomId('hunt:flee').setLabel('🏃 Kaç').setStyle(ButtonStyle.Secondary).setDisabled(disabled);
             const row = new ActionRowBuilder().addComponents(attackBtn, fleeBtn);
 
-            if (skills && skills.length > 0) {
-                const skillRow = new ActionRowBuilder().addComponents(
-                    skills.slice(0, 3).map((s, idx) =>
-                        new ButtonBuilder()
-                            .setCustomId(`hunt:skill:${idx}`)
-                            .setLabel(`⚡ ${s.name.slice(0, 20)}`)
-                            .setStyle(ButtonStyle.Primary)
-                            .setDisabled(disabled)
-                    )
-                );
-                return [row, skillRow];
+            if (skills.length > 0) {
+                const skillBtns = skills.slice(0, 3).map((s, idx) => {
+                    const cd = skillCooldowns[idx] || 0;
+                    return new ButtonBuilder()
+                        .setCustomId(`hunt:skill:${idx}`)
+                        .setLabel(cd > 0 ? `🕐 ${s.name.slice(0, 16)} (${cd}t)` : `⚡ ${s.name.slice(0, 20)}`)
+                        .setStyle(cd > 0 ? ButtonStyle.Secondary : ButtonStyle.Primary)
+                        .setDisabled(disabled || cd > 0);
+                });
+                return [row, new ActionRowBuilder().addComponents(...skillBtns)];
             }
             return [row];
         };
+
 
         const embed = combatEmbed(
             { name: player.username, hp: fighter.hp, maxHp: fighter.maxHp },
@@ -123,15 +147,14 @@ module.exports = {
             }
 
             // Oyuncu saldırı
-            let usedSkill = null;
-            if (i.customId.startsWith('hunt:skill:')) {
-                const idx = parseInt(i.customId.split(':')[2]);
-                usedSkill = skills?.[idx] || null;
-            }
-
             const playerDmg = calcDamage(fighter, enemy, usedSkill);
             enemy.hp -= playerDmg;
-            actionLog += `⚔️ **${player.username}** → ${usedSkill ? `**${usedSkill.name}** ile` : ''} **${playerDmg}** hasar verdi!\n`;
+
+            if (usedSkill && skillIdx >= 0) skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
+            for (let i = 0; i < skillCooldowns.length; i++) if (skillCooldowns[i] > 0 && i !== skillIdx) skillCooldowns[i]--;
+
+            actionLog += `⚔️ **${player.username}** → ${usedSkill ? `**⚡ ${usedSkill.name}** ile` : ''} **${playerDmg}** hasar!\n`;
+
             if (usedSkill) {
                 const effectLogs = applyEffects(usedSkill, fighter, enemy);
                 if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
@@ -163,19 +186,26 @@ module.exports = {
                     }
                 }
 
-                const goldDrop = drops.find(d => d.type === 'gold')?.amount || 0;
+                const goldDrop = drops.find(d => d.type === 'gold')?.amount || (npc.gold ? Math.floor(Math.random() * (npc.gold[1] - npc.gold[0]) + npc.gold[0]) : 50);
                 const diamondDrop = drops.find(d => d.type === 'diamond')?.amount || 0;
                 const itemDrop = drops.find(d => d.type === 'item');
 
+                player.gold += goldDrop;
+
+                const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
+                const hpBar = '🟩'.repeat(Math.round(pct / 10)) + '⬛'.repeat(10 - Math.round(pct / 10));
+
                 const wonEmbed = new EmbedBuilder()
-                    .setColor(0x2ecc71)
+                    .setColor(TIER_COLOR[npc.tier] || 0x2ecc71)
                     .setTitle('🏆 Zafer!')
-                    .setDescription(`**${npc.emoji} ${npc.name}** yenildi!`)
+                    .setDescription(`${npc.emoji} **${npc.name}** yenildi!`)
                     .addFields(
-                        { name: '🎁 Ödüller', value: `💰 +${goldDrop} Altın\n💎 +${diamondDrop} Elmas${itemDrop ? `\n📦 +1 ${itemDrop.item.name}` : ''}`, inline: true },
-                        { name: '📈 EXP', value: `+${npc.exp} EXP`, inline: true },
+                        { name: '❤️ Kalan HP', value: `${hpBar} ${pct}%`, inline: false },
+                        { name: '🎁 Ödüller', value: `💰 +${goldDrop} Altın\n💎 +${diamondDrop} Elmas${itemDrop ? `\n📦 ${itemDrop.item.emoji || '📦'} ${itemDrop.item.name}` : ''}`, inline: true },
+                        { name: '📈 Kazanç', value: `+${npc.exp} EXP\n🔥 Seri: ${player.winStreak}`, inline: true },
                     )
-                    .setFooter({ text: '⚡ Kurayami RPG • Hunt' });
+                    .setFooter({ text: `⚡ Kurayami RPG • Hunt • Tier: ${npc.tier.toUpperCase()}` });
+
 
                 await addExp(player, npc.exp, message.channel);
                 await player.save();

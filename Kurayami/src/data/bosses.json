@@ -580,6 +580,170 @@
             "race": "titan"
         }
     ],
+    "crossover": [
+        {
+            "id": "gojo_satoru",
+            "name": "Gojo Satoru",
+            "tier": "strong",
+            "emoji": "🕶️",
+            "hp": 8000,
+            "power": 180,
+            "defense": 160,
+            "speed": 170,
+            "drops": {
+                "gold": [
+                    5000,
+                    9000
+                ],
+                "diamond": 1200,
+                "itemDrops": [
+                    {
+                        "itemId": "gojo_head",
+                        "chance": 0.12
+                    },
+                    {
+                        "itemId": "gojo_chest",
+                        "chance": 0.10
+                    },
+                    {
+                        "itemId": "gojo_legs",
+                        "chance": 0.10
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Infinity",
+                    "damage": 0,
+                    "cooldown": 2,
+                    "effect": {
+                        "self": {
+                            "defense": 80
+                        }
+                    }
+                },
+                {
+                    "name": "Hollow Purple",
+                    "damage": 350,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Limitless: Blue",
+                    "damage": 200,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Limitless: Red",
+                    "damage": 280,
+                    "cooldown": 3
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "sukuna",
+            "name": "Ryomen Sukuna",
+            "tier": "strong",
+            "emoji": "👹",
+            "hp": 10000,
+            "power": 200,
+            "defense": 140,
+            "speed": 180,
+            "drops": {
+                "gold": [
+                    7000,
+                    11000
+                ],
+                "diamond": 1500,
+                "itemDrops": [
+                    {
+                        "itemId": "void_crystal",
+                        "chance": 0.35
+                    },
+                    {
+                        "itemId": "dark_fragment",
+                        "chance": 0.50
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Slaughter Demon",
+                    "damage": 300,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Dismantle",
+                    "damage": 250,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Malevolent Shrine",
+                    "damage": 450,
+                    "cooldown": 5
+                },
+                {
+                    "name": "Cleave",
+                    "damage": 180,
+                    "cooldown": 1
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "ichigo_vasto",
+            "name": "Ichigo (Vasto Lorde Formu)",
+            "tier": "strong",
+            "emoji": "🩺",
+            "hp": 7500,
+            "power": 165,
+            "defense": 120,
+            "speed": 155,
+            "drops": {
+                "gold": [
+                    5000,
+                    8000
+                ],
+                "diamond": 1000,
+                "itemDrops": [
+                    {
+                        "itemId": "ichigo_head",
+                        "chance": 0.15
+                    },
+                    {
+                        "itemId": "ichigo_chest",
+                        "chance": 0.12
+                    },
+                    {
+                        "itemId": "ichigo_legs",
+                        "chance": 0.12
+                    },
+                    {
+                        "itemId": "hollow_mask",
+                        "chance": 0.30
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Kuroi Getsuga",
+                    "damage": 300,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Cero (Vasto)",
+                    "damage": 250,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Saigo no Getsuga",
+                    "damage": 500,
+                    "cooldown": 6
+                }
+            ],
+            "race": "hollow"
+        }
+    ],
     "sololeveling": [
         {
             "id": "antares",
@@ -639,6 +803,153 @@
                 {
                     "name": "Ruler's Authority",
                     "damage": 250,
+                    "cooldown": 4
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "igris",
+            "name": "Igris (Shadow Monarkın Şövalyesi)",
+            "tier": "medium",
+            "emoji": "🗡️",
+            "hp": 4000,
+            "power": 110,
+            "defense": 90,
+            "speed": 100,
+            "drops": {
+                "gold": [
+                    2500,
+                    4000
+                ],
+                "diamond": 400,
+                "itemDrops": [
+                    {
+                        "itemId": "shadow_monarch_chest",
+                        "chance": 0.08
+                    },
+                    {
+                        "itemId": "spirit_core",
+                        "chance": 0.40
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Crimson Knight Slash",
+                    "damage": 180,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Shadow Charge",
+                    "damage": 140,
+                    "cooldown": 1
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "beru",
+            "name": "Beru (Karınca Kral)",
+            "tier": "strong",
+            "emoji": "🐜",
+            "hp": 6000,
+            "power": 145,
+            "defense": 100,
+            "speed": 130,
+            "drops": {
+                "gold": [
+                    4000,
+                    7000
+                ],
+                "diamond": 800,
+                "itemDrops": [
+                    {
+                        "itemId": "shadow_monarch_head",
+                        "chance": 0.10
+                    },
+                    {
+                        "itemId": "shadow_monarch_legs",
+                        "chance": 0.10
+                    },
+                    {
+                        "itemId": "spirit_core",
+                        "chance": 0.45
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Acid Spray",
+                    "damage": 200,
+                    "cooldown": 2,
+                    "effect": {
+                        "enemy": {
+                            "dot": {
+                                "damage": 50,
+                                "duration": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Swarm",
+                    "damage": 150,
+                    "cooldown": 1
+                },
+                {
+                    "name": "Queen's Command",
+                    "damage": 280,
+                    "cooldown": 4
+                }
+            ],
+            "race": null
+        },
+        {
+            "id": "thomas_andre",
+            "name": "Thomas Andre (S-Rank Hunter)",
+            "tier": "strong",
+            "emoji": "💪",
+            "hp": 5500,
+            "power": 135,
+            "defense": 130,
+            "speed": 90,
+            "drops": {
+                "gold": [
+                    3500,
+                    6000
+                ],
+                "diamond": 700,
+                "itemDrops": [
+                    {
+                        "itemId": "dragon_scale",
+                        "chance": 0.35
+                    },
+                    {
+                        "itemId": "void_crystal",
+                        "chance": 0.15
+                    }
+                ]
+            },
+            "skills": [
+                {
+                    "name": "Reinforcement",
+                    "damage": 0,
+                    "cooldown": 3,
+                    "effect": {
+                        "self": {
+                            "defense": 60
+                        }
+                    }
+                },
+                {
+                    "name": "Destruction",
+                    "damage": 220,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Collapse",
+                    "damage": 300,
                     "cooldown": 4
                 }
             ],

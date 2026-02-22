@@ -1,44 +1,125 @@
 const Player = require('../models/Player');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { errorEmbed, getColor } = require('../utils/embedBuilder');
-const { calcDamage, applyEffects, buildFighterState } = require('../utils/combatEngine');
+const { applyEffects, processDotsAndStatuses, isSkipping, buildFighterState } = require('../utils/combatEngine');
 const { addExp } = require('../utils/levelSystem');
 const { checkAchievements } = require('../utils/achievementSystem');
 
+const RACE_SKILLS = require('../data/race_skills.json');
+
+// ──────── Skill çekimi ────────
 function getPlayerSkills(player) {
-    if (!player.raceForm) return [];
     const race = player.race;
+    const evolution = player.raceEvolution || 0;
+    if (!race || evolution === 0) return [];
+
     if (race === 'shinigami') {
-        const zanpakutos = require('../data/zanpakutos.json');
-        const z = zanpakutos.find(z => z.id === player.raceData?.zanpakuto);
-        if (z) return player.raceEvolution >= 2 ? z.bankai : z.shikai;
+        const id = player.raceData?.zanpakuto || 'default_shinigami';
+        const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
+        return z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
     }
     if (race === 'hollow') {
-        const espadas = require('../data/espadas.json');
-        const e = espadas.find(e => e.id === player.raceData?.espada);
-        if (e) return e.skills;
+        const id = player.raceData?.espada || 'default_hollow';
+        const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
+        return e?.skills || [];
     }
-    if (race === 'titan') {
-        const titans = require('../data/titans.json');
-        const t = titans.find(t => t.id === player.raceData?.titan);
-        if (t) return t.skills;
+    if (race === 'quincy') {
+        const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
+        if (!q) return [];
+        if (evolution >= 3) return q.yhwach;
+        if (evolution >= 2) return q.sternritter;
+        return q.vollstandig;
     }
     return [];
 }
 
+// ──────── Hasar hesabı (power çarpanlı) ────────
+function calcDmg(attacker, defender, skill = null) {
+    const base = attacker.power * 2;
+    const rand = Math.floor(Math.random() * 10) + 1;
+    let dmg;
+    if (skill) {
+        dmg = Math.floor(base * skill.power) - Math.floor(defender.defense / 2) + rand;
+    } else {
+        dmg = Math.floor(base) - Math.floor(defender.defense / 2) + rand;
+    }
+    return Math.max(1, dmg);
+}
+
+// ──────── HP bar ────────
+function hpBar(hp, max, len = 10) {
+    const fill = Math.round((Math.max(0, hp) / max) * len);
+    return '🟩'.repeat(fill) + '⬛'.repeat(len - fill);
+}
+
+// ──────── Embed ────────
 function buildDuelEmbed(f1, f2, log, turn, ranked) {
+    const pct1 = Math.max(0, Math.round((f1.hp / f1.maxHp) * 100));
+    const pct2 = Math.max(0, Math.round((f2.hp / f2.maxHp) * 100));
+
+    const statusLine = (f) => {
+        const parts = [];
+        if (f.burn) parts.push(`🔥 Yanıyor(${f.burn.duration}t)`);
+        if (f.dot) parts.push(`☠️ Zehir(${f.dot.duration}t)`);
+        if (f.frozen > 0) parts.push(`🧊 Donmuş`);
+        if (f.stunned > 0) parts.push(`💫 Sersem`);
+        return parts.join(' ') || '✅ Normal';
+    };
+
     return new EmbedBuilder()
         .setColor(ranked ? 0xe74c3c : 0x3498db)
-        .setTitle(`${ranked ? '🏆 Ranked' : '⚔️ Normal'} Düello`)
-        .setDescription(log)
+        .setTitle(`${ranked ? '🏆 Ranked' : '⚔️'} Düello — Tur ${turn}`)
         .addFields(
-            { name: `${f1.name}`, value: `❤️ ${Math.max(0, f1.hp)}/${f1.maxHp}`, inline: true },
-            { name: '⚔️ Tur', value: `${turn}`, inline: true },
-            { name: `${f2.name}`, value: `❤️ ${Math.max(0, f2.hp)}/${f2.maxHp}`, inline: true }
+            {
+                name: `🔵 ${f1.name} [${pct1}%]`,
+                value: `${hpBar(f1.hp, f1.maxHp)} \`${Math.max(0, f1.hp)}/${f1.maxHp}\`\n${statusLine(f1)}`,
+                inline: true
+            },
+            { name: '⚔️', value: '\u200b', inline: true },
+            {
+                name: `🔴 ${f2.name} [${pct2}%]`,
+                value: `${hpBar(f2.hp, f2.maxHp)} \`${Math.max(0, f2.hp)}/${f2.maxHp}\`\n${statusLine(f2)}`,
+                inline: true
+            },
+            { name: '📜 Son Hamle', value: log.slice(-900) || '—', inline: false }
         )
         .setFooter({ text: '⚡ Kurayami RPG • PvP' })
         .setTimestamp();
 }
+
+// ──────── Butonlar ────────
+function buildButtons(whoseTurn, skills, cooldowns, disabled = false) {
+    const prefix = whoseTurn === 'f1' ? 'duel1' : 'duel2';
+    const rows = [];
+
+    const attackBtn = new ButtonBuilder()
+        .setCustomId(`${prefix}:attack`)
+        .setLabel('⚔️ Saldır')
+        .setStyle(ButtonStyle.Danger)
+        .setDisabled(disabled);
+
+    const surrenderBtn = new ButtonBuilder()
+        .setCustomId(`${prefix}:surrender`)
+        .setLabel('🏳️ Teslim Ol')
+        .setStyle(ButtonStyle.Secondary)
+        .setDisabled(disabled);
+
+    rows.push(new ActionRowBuilder().addComponents(attackBtn, surrenderBtn));
+
+    if (skills.length > 0) {
+        const skillBtns = skills.slice(0, 4).map((s, idx) => {
+            const cd = cooldowns[idx] || 0;
+            return new ButtonBuilder()
+                .setCustomId(`${prefix}:skill:${idx}`)
+                .setLabel(cd > 0 ? `🕐 ${s.name.slice(0, 16)} (${cd}t)` : `⚡ ${s.name.slice(0, 20)}`)
+                .setStyle(cd > 0 ? ButtonStyle.Secondary : ButtonStyle.Primary)
+                .setDisabled(disabled || cd > 0);
+        });
+        rows.push(new ActionRowBuilder().addComponents(...skillBtns));
+    }
+    return rows;
+}
+
 
 module.exports = {
     name: 'duel',
@@ -60,7 +141,7 @@ module.exports = {
         if (challenger.hp <= 0) return message.reply({ embeds: [errorEmbed('HP\'n tükendi! Önce `+rest` ile iyileş.')] });
         if (ranked && challenger.rankedTier === 'unranked') return message.reply({ embeds: [errorEmbed('Ranked\'e girmek için önce 10 düello oyna!')] });
 
-        // Davet mesajı
+        // Davet
         const inviteRow = new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('duel:accept').setLabel('✅ Kabul Et').setStyle(ButtonStyle.Success),
             new ButtonBuilder().setCustomId('duel:decline').setLabel('❌ Reddet').setStyle(ButtonStyle.Danger)
@@ -68,17 +149,12 @@ module.exports = {
 
         const inviteEmbed = new EmbedBuilder()
             .setColor(ranked ? 0xe74c3c : 0x3498db)
-            .setTitle(`${ranked ? '🏆 Ranked' : '⚔️ Normal'} Düello Daveti`)
-            .setDescription(`**${target.displayName}**, **${message.author.displayName}** seni ${ranked ? 'ranked ' : ''}düelloya davet ediyor!\n\n60 saniye içinde kabul et!`)
+            .setTitle(`${ranked ? '🏆 Ranked' : '⚔️'} Düello Daveti`)
+            .setDescription(`**${target.displayName}**, **${message.author.displayName}** seni düelloya davet ediyor!\n\n60 saniyede kabul et!`)
             .setFooter({ text: '⚡ Kurayami RPG • PvP' });
 
         const inviteMsg = await message.reply({ content: `${target}`, embeds: [inviteEmbed], components: [inviteRow] });
-
-        const inviteCollector = inviteMsg.createMessageComponentCollector({
-            time: 60000,
-            filter: i => i.user.id === target.id,
-            max: 1
-        });
+        const inviteCollector = inviteMsg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === target.id, max: 1 });
 
         inviteCollector.on('collect', async (inv) => {
             await inv.deferUpdate();
@@ -87,7 +163,7 @@ module.exports = {
                 return;
             }
 
-            // Savaş başla
+            // Savaş başlat
             challenger.inBattle = true;
             defender.inBattle = true;
             await challenger.save();
@@ -95,132 +171,170 @@ module.exports = {
 
             const f1 = buildFighterState(challenger, challenger.username);
             const f2 = buildFighterState(defender, defender.username);
+
             const skills1 = getPlayerSkills(challenger);
             const skills2 = getPlayerSkills(defender);
+            const cd1 = skills1.map(() => 0); // cooldown sayaçları
+            const cd2 = skills2.map(() => 0);
 
             let turn = 1;
-            let currentTurn = f1.speed >= f2.speed ? 'f1' : 'f2'; // Hızlı başlar
-            let log = `⚡ Savaş başladı! **${currentTurn === 'f1' ? f1.name : f2.name}** ilk hamleyi yapıyor!`;
-
-            const buildButtons = (whoseTurn, disabled = false) => {
-                const skills = whoseTurn === 'f1' ? skills1 : skills2;
-                const prefix = whoseTurn === 'f1' ? 'duel1' : 'duel2';
-
-                const attackBtn = new ButtonBuilder().setCustomId(`${prefix}:attack`).setLabel('⚔️ Saldır').setStyle(ButtonStyle.Danger).setDisabled(disabled);
-                const row = new ActionRowBuilder().addComponents(attackBtn);
-
-                if (skills.length > 0) {
-                    const skillRow = new ActionRowBuilder().addComponents(
-                        skills.slice(0, 4).map((s, idx) =>
-                            new ButtonBuilder()
-                                .setCustomId(`${prefix}:skill:${idx}`)
-                                .setLabel(`⚡ ${s.name.slice(0, 20)}`)
-                                .setStyle(ButtonStyle.Primary)
-                                .setDisabled(disabled)
-                        )
-                    );
-                    return [row, skillRow];
-                }
-                return [row];
-            };
+            let currentTurn = f1.speed >= f2.speed ? 'f1' : 'f2';
+            let log = `⚔️ **${currentTurn === 'f1' ? f1.name : f2.name}** ilk hamleyi yapıyor!`;
 
             const duelMsg = await inviteMsg.edit({
                 content: `${message.author} ${target}`,
                 embeds: [buildDuelEmbed(f1, f2, log, turn, ranked)],
-                components: buildButtons(currentTurn)
+                components: buildButtons(currentTurn, currentTurn === 'f1' ? skills1 : skills2, currentTurn === 'f1' ? cd1 : cd2)
             });
 
-            const duelCollector = duelMsg.createMessageComponentCollector({ time: 120000 });
+            const duelCollector = duelMsg.createMessageComponentCollector({ time: 180000 });
 
             duelCollector.on('collect', async (btn) => {
                 const isF1Turn = currentTurn === 'f1';
                 const expectedUser = isF1Turn ? message.author.id : target.id;
+
                 if (btn.user.id !== expectedUser) {
                     await btn.reply({ content: '⏳ Senin turun değil!', ephemeral: true });
                     return;
                 }
                 await btn.deferUpdate();
 
-                const attacker = isF1Turn ? f1 : f2;
-                const defender2 = isF1Turn ? f2 : f1;
-                const skills = isF1Turn ? skills1 : skills2;
-                const prefix = isF1Turn ? 'duel1' : 'duel2';
-
-                let usedSkill = null;
-                if (btn.customId.startsWith(`${prefix}:skill:`)) {
-                    const idx = parseInt(btn.customId.split(':')[2]);
-                    usedSkill = skills[idx] || null;
-                }
-
-                const dmg = calcDamage(attacker, defender2, usedSkill);
-                defender2.hp -= dmg;
-                let actionLog = `${isF1Turn ? '🔵' : '🔴'} **${attacker.name}** ${usedSkill ? `**${usedSkill.name}** ile` : ''} **${dmg}** hasar verdi!\n`;
-
-                if (usedSkill) {
-                    const effectLogs = applyEffects(usedSkill, attacker, defender2);
-                    if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
-                }
-
-                // Kazanan kontrolü
-                if (defender2.hp <= 0) {
+                // 🏳️ Teslim ol
+                if (btn.customId.endsWith(':surrender')) {
                     duelCollector.stop('done');
-                    const winner = isF1Turn ? challenger : defender;
-                    const loser = isF1Turn ? defender : challenger;
-                    const winPlayer = isF1Turn ? f1 : f2;
-                    const losePlayer = isF1Turn ? f2 : f1;
-
-                    winner.pvpWins += 1;
-                    loser.pvpLosses += 1;
-                    winner.inBattle = false;
-                    loser.inBattle = false;
-                    loser.hp = Math.max(1, Math.floor(loser.maxHp * 0.1));
-
-                    const expWin = ranked ? 300 : 100;
-                    const expLose = ranked ? 50 : 30;
-                    const diamondWin = ranked ? 100 : 20;
-
-                    winner.diamond += diamondWin;
-
+                    const loserPlayer = isF1Turn ? challenger : defender;
+                    const winnerPlayer = isF1Turn ? defender : challenger;
+                    loserPlayer.pvpLosses += 1;
+                    loserPlayer.winStreak = 0;
+                    winnerPlayer.pvpWins += 1;
+                    winnerPlayer.diamond += ranked ? 100 : 20;
+                    loserPlayer.inBattle = false;
+                    winnerPlayer.inBattle = false;
                     if (ranked) {
-                        winner.rankedPoints = (winner.rankedPoints || 0) + 25;
-                        loser.rankedPoints = Math.max(0, (loser.rankedPoints || 0) - 15);
+                        winnerPlayer.rankedPoints = (winnerPlayer.rankedPoints || 0) + 25;
+                        loserPlayer.rankedPoints = Math.max(0, (loserPlayer.rankedPoints || 0) - 15);
                     }
-
-                    await winner.save();
-                    await loser.save();
-                    await addExp(winner, expWin, message.channel);
-                    await addExp(loser, expLose, null);
-                    await checkAchievements(winner, message.channel);
-
-                    const endEmbed = new EmbedBuilder()
-                        .setColor(0xf1c40f)
-                        .setTitle(`🏆 Düello Bitti!`)
-                        .setDescription(`⚡ **${winner.username}** kazandı!`)
-                        .addFields(
-                            {
-                                name: `🥇 ${winner.username}`,
-                                value: `+${expWin} EXP\n+${diamondWin} 💎${ranked ? `\n+25 Ranked Puan` : ''}`,
-                                inline: true
-                            },
-                            {
-                                name: `💀 ${loser.username}`,
-                                value: `+${expLose} EXP${ranked ? `\n-15 Ranked Puan` : ''}`,
-                                inline: true
-                            }
-                        )
-                        .setFooter({ text: '⚡ Kurayami RPG • PvP' });
-
-                    await duelMsg.edit({ embeds: [endEmbed], components: [] });
+                    await loserPlayer.save();
+                    await winnerPlayer.save();
+                    await duelMsg.edit({
+                        embeds: [new EmbedBuilder().setColor(0x95a5a6)
+                            .setTitle('🏳️ Teslim Olundu!')
+                            .setDescription(`**${isF1Turn ? f1.name : f2.name}** teslim oldu! **${isF1Turn ? f2.name : f1.name}** kazandı!`)
+                            .setFooter({ text: '⚡ Kurayami RPG • PvP' })],
+                        components: []
+                    });
                     return;
                 }
+
+                const attacker = isF1Turn ? f1 : f2;
+                const defenderF = isF1Turn ? f2 : f1;
+                const skills = isF1Turn ? skills1 : skills2;
+                const cd = isF1Turn ? cd1 : cd2;
+                const otherCd = isF1Turn ? cd2 : cd1;
+                const prefix = isF1Turn ? 'duel1' : 'duel2';
+
+                // DOT/burn efektleri tur başında
+                const dotLogs = processDotsAndStatuses(attacker);
+
+                if (isSkipping(attacker)) {
+                    log = `${dotLogs.join('\n')}\n⏸️ **${attacker.name}** tur atlıyor!`;
+                } else {
+                    let usedSkill = null;
+                    let skillIdx = -1;
+
+                    if (btn.customId.startsWith(`${prefix}:skill:`)) {
+                        skillIdx = parseInt(btn.customId.split(':')[2]);
+                        usedSkill = skills[skillIdx] || null;
+                    }
+
+                    const dmg = calcDmg(attacker, defenderF, usedSkill);
+                    defenderF.hp -= dmg;
+
+                    // Skill cooldown'u başlat
+                    if (usedSkill && skillIdx >= 0) {
+                        cd[skillIdx] = usedSkill.cooldown || 2;
+                    }
+
+                    // ── Aksiyon logu — skill adı büyük çıksın ──
+                    let actionLog = `${isF1Turn ? '🔵' : '🔴'} **${attacker.name}**\n`;
+                    if (usedSkill) {
+                        actionLog += `> ⚡ **${usedSkill.name}** kullandı → **${dmg}** hasar!`;
+                    } else {
+                        actionLog += `> ⚔️ Normal saldırı → **${dmg}** hasar!`;
+                    }
+
+                    if (usedSkill) {
+                        const effectLogs = applyEffects(usedSkill, attacker, defenderF);
+                        if (effectLogs.length) actionLog += '\n' + effectLogs.join(' ');
+                    }
+
+                    log = (dotLogs.length ? dotLogs.join('\n') + '\n' : '') + actionLog;
+
+                    // Kazanan kontrolü
+                    if (defenderF.hp <= 0) {
+                        // Revive kontrolü
+                        if (defenderF.hasRevive) {
+                            defenderF.hasRevive = false;
+                            defenderF.hp = Math.floor(defenderF.maxHp * 0.2);
+                            log += `\n✨ **${defenderF.name}** ölümden döndü! (%20 HP)`;
+                        } else {
+                            duelCollector.stop('done');
+                            const winner = isF1Turn ? challenger : defender;
+                            const loser = isF1Turn ? defender : challenger;
+
+                            winner.pvpWins += 1;
+                            loser.pvpLosses += 1;
+                            winner.inBattle = false;
+                            loser.inBattle = false;
+                            loser.hp = Math.max(1, Math.floor(loser.maxHp * 0.1));
+                            winner.winStreak = (winner.winStreak || 0) + 1;
+                            loser.winStreak = 0;
+
+                            const expWin = ranked ? 300 : 100;
+                            const expLose = ranked ? 50 : 30;
+                            const diamondWin = ranked ? 100 : 20;
+                            winner.diamond += diamondWin;
+
+                            if (ranked) {
+                                winner.rankedPoints = (winner.rankedPoints || 0) + 25;
+                                loser.rankedPoints = Math.max(0, (loser.rankedPoints || 0) - 15);
+                            }
+
+                            await winner.save();
+                            await loser.save();
+                            await addExp(winner, expWin, message.channel);
+                            await addExp(loser, expLose, null);
+                            await checkAchievements(winner, message.channel);
+
+                            const endEmbed = new EmbedBuilder()
+                                .setColor(0xf1c40f)
+                                .setTitle('🏆 Düello Bitti!')
+                                .setDescription(`⚡ **${winner.username}** kazandı!\n\n${log}`)
+                                .addFields(
+                                    { name: `🥇 ${winner.username}`, value: `+${expWin} EXP\n+${diamondWin} 💎${ranked ? `\n+25 🏆 Ranked Puan` : ''}`, inline: true },
+                                    { name: `💀 ${loser.username}`, value: `+${expLose} EXP${ranked ? `\n-15 🏆 Ranked Puan` : ''}`, inline: true }
+                                )
+                                .setFooter({ text: '⚡ Kurayami RPG • PvP' });
+
+                            await duelMsg.edit({ embeds: [endEmbed], components: [] });
+                            return;
+                        }
+                    }
+                }
+
+                // Cooldown'ları 1 azalt (her tur)
+                for (let i = 0; i < cd.length; i++) if (cd[i] > 0) cd[i]--;
+                for (let i = 0; i < otherCd.length; i++) if (otherCd[i] > 0) otherCd[i]--;
 
                 // Tur geçiş
                 currentTurn = isF1Turn ? 'f2' : 'f1';
                 turn++;
+                const nextSkills = currentTurn === 'f1' ? skills1 : skills2;
+                const nextCd = currentTurn === 'f1' ? cd1 : cd2;
 
                 await duelMsg.edit({
-                    embeds: [buildDuelEmbed(f1, f2, actionLog + `\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
-                    components: buildButtons(currentTurn)
+                    embeds: [buildDuelEmbed(f1, f2, `${log}\n\n➡️ **${currentTurn === 'f1' ? f1.name : f2.name}** hamlesi!`, turn, ranked)],
+                    components: buildButtons(currentTurn, nextSkills, nextCd)
                 });
             });
 

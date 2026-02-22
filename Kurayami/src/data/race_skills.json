@@ -1,0 +1,299 @@
+{
+    "shinigami": [
+        {
+            "id": "tensa_zangetsu",
+            "name": "Tensa Zangetsu",
+            "shikai": [
+                {
+                    "name": "Getsuga Tensho",
+                    "power": 1.8,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Hirenkyaku",
+                    "power": 1.3,
+                    "cooldown": 1
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Kuroi Getsuga",
+                    "power": 2.5,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Saigo no Getsuga",
+                    "power": 4.0,
+                    "cooldown": 6
+                }
+            ]
+        },
+        {
+            "id": "senbonzakura",
+            "name": "Senbonzakura",
+            "shikai": [
+                {
+                    "name": "Shard Rain",
+                    "power": 1.7,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Petal Shield",
+                    "power": 0.5,
+                    "cooldown": 2
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Gokei",
+                    "power": 3.0,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Hakuteiken",
+                    "power": 4.2,
+                    "cooldown": 6
+                }
+            ]
+        },
+        {
+            "id": "ryujin_jakka",
+            "name": "Ryujin Jakka",
+            "shikai": [
+                {
+                    "name": "Ennetsu Jigoku",
+                    "power": 2.0,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Itto Kaso",
+                    "power": 2.5,
+                    "cooldown": 3
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Zanka no Tachi Higashi",
+                    "power": 3.5,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Zanka no Tachi Nishi",
+                    "power": 5.0,
+                    "cooldown": 7
+                }
+            ]
+        },
+        {
+            "id": "hyorinmaru",
+            "name": "Hyorinmaru",
+            "shikai": [
+                {
+                    "name": "Buz Ejderhasi",
+                    "power": 1.9,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Sennen Hyoro",
+                    "power": 2.0,
+                    "cooldown": 3
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Guncho Tsurara",
+                    "power": 3.2,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Ryusenka",
+                    "power": 4.5,
+                    "cooldown": 6
+                }
+            ]
+        },
+        {
+            "id": "default_shinigami",
+            "name": "Bilinmeyen Zanpakuto",
+            "shikai": [
+                {
+                    "name": "Ruhsal Kesim",
+                    "power": 1.8,
+                    "cooldown": 2
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Nihai Form",
+                    "power": 3.0,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Ruh Patlamasi",
+                    "power": 4.0,
+                    "cooldown": 6
+                }
+            ]
+        }
+    ],
+    "hollow": [
+        {
+            "id": "ulquiorra",
+            "name": "Ulquiorra",
+            "skills": [
+                {
+                    "name": "Cero Oscuras",
+                    "power": 2.5,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Lanza del Relampago",
+                    "power": 2.0,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Segunda Etapa",
+                    "power": 3.5,
+                    "cooldown": 6
+                }
+            ]
+        },
+        {
+            "id": "grimmjow",
+            "name": "Grimmjow",
+            "skills": [
+                {
+                    "name": "Desgarron",
+                    "power": 2.5,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Pantera Rush",
+                    "power": 1.8,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Gran Rey Cero",
+                    "power": 3.0,
+                    "cooldown": 5
+                }
+            ]
+        },
+        {
+            "id": "baraggan",
+            "name": "Baraggan",
+            "skills": [
+                {
+                    "name": "Respira",
+                    "power": 2.8,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Gran Caida",
+                    "power": 2.0,
+                    "cooldown": 3
+                }
+            ]
+        },
+        {
+            "id": "starrk",
+            "name": "Starrk",
+            "skills": [
+                {
+                    "name": "Los Lobos Cedar",
+                    "power": 2.5,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Colmillo",
+                    "power": 2.0,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Gran Rey Cero Twin",
+                    "power": 3.2,
+                    "cooldown": 5
+                }
+            ]
+        },
+        {
+            "id": "halibel",
+            "name": "Harribel",
+            "skills": [
+                {
+                    "name": "Cascada",
+                    "power": 2.3,
+                    "cooldown": 3
+                },
+                {
+                    "name": "La Gota",
+                    "power": 3.0,
+                    "cooldown": 5
+                }
+            ]
+        },
+        {
+            "id": "default_hollow",
+            "name": "Hollow",
+            "skills": [
+                {
+                    "name": "Cero",
+                    "power": 1.8,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Gran Cero",
+                    "power": 2.2,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Hierro Slash",
+                    "power": 1.5,
+                    "cooldown": 1
+                }
+            ]
+        }
+    ],
+    "quincy": [
+        {
+            "id": "default_quincy",
+            "name": "Quincy",
+            "vollstandig": [
+                {
+                    "name": "Heilig Pfeil",
+                    "power": 2.0,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Hirenkyaku",
+                    "power": 1.5,
+                    "cooldown": 1
+                }
+            ],
+            "sternritter": [
+                {
+                    "name": "Sklaverei",
+                    "power": 2.8,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Heilig Feuer",
+                    "power": 3.5,
+                    "cooldown": 5
+                }
+            ],
+            "yhwach": [
+                {
+                    "name": "Auswahlen",
+                    "power": 4.0,
+                    "cooldown": 5
+                },
+                {
+                    "name": "The Almighty",
+                    "power": 5.0,
+                    "cooldown": 8
+                }
+            ]
+        }
+    ]
+}

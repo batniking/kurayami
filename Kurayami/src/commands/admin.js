@@ -4,10 +4,19 @@ const { EmbedBuilder } = require('discord.js');
 const { errorEmbed, successEmbed } = require('../utils/embedBuilder');
 const items = require('../data/items.json');
 
-const ALL_ITEMS = [...items.general, ...items.armors, ...items.accessories, ...items.pots];
+const ALL_ITEMS = [
+    ...items.general,
+    ...(items.armors || []),
+    ...(items.accessories || []),
+    ...(items.pots || []),
+    ...(items.arrancar_weapons || []),
+    ...(items.craft_materials || []),
+    ...(items.bleach_weapons || []),
+    ...(items.race_items || []),
+];
 
 // ⚠️ Admin Discord ID'leri buraya ekle
-const ADMIN_IDS = ['SENIN_DISCORD_ID_BURAYA'];
+const ADMIN_IDS = ['1194705296946380882'];
 
 module.exports = {
     name: 'admin',
