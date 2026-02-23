@@ -72,8 +72,11 @@ client.on('warn', (info) => console.warn('⚠️ Discord uyarı:', info));
         if (!process.env.DISCORD_TOKEN) {
             throw new Error('DISCORD_TOKEN env değişkeni tanımlanmamış!');
         }
-        console.log('🔄 Discord\'a giriş yapılıyor...');
-        await client.login(process.env.DISCORD_TOKEN);
+        console.log('🔄 Discord\'a giriş yapılıyor... Token uzunluğu:', process.env.DISCORD_TOKEN.length);
+        await Promise.race([
+            client.login(process.env.DISCORD_TOKEN),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Discord login 15sn içinde tamamlanamadı — token geçersiz ya da Discord bağlantısı yok')), 15000))
+        ]);
         console.log('✅ Discord login başarılı!');
     } catch (error) {
         console.error('❌ Başlatma hatası:', error.message || error);
