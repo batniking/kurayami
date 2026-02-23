@@ -9,6 +9,8 @@ const { safeDeferUpdate, safeReply } = require('../utils/interactionUtils');
 const battleSessions = require('../utils/battleSessions');
 const { getOrCreateBattleThread } = require('../utils/threadHelper');
 const RACE_SKILLS = require('../data/race_skills.json');
+
+
 // ──────── Dungeon Tanımları ────────
 const DUNGEONS = {
     goblin_cave: {
@@ -254,130 +256,130 @@ module.exports = {
                     return;
                 }
 
-            // ── Oyuncu hamlesi ──
-            let usedSkill = null;
-            let skillIdx = -1;
-            if (i.customId.startsWith('dg:skill:')) {
-                skillIdx = parseInt(i.customId.split(':')[2]);
-                usedSkill = skills[skillIdx] || null;
-                if (!usedSkill) {
-                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
-                    return;
-                }
-                if ((skillCooldowns[skillIdx] || 0) > 0) {
-                    await safeReply(i, '⏳ Bu skill bekleme süresinde.');
-                    return;
-                }
-            }
-
-            // DOT işle
-            const dotLogs = processDotsAndStatuses(fighter);
-            let log = dotLogs.length ? dotLogs.join('\n') + '\n' : '';
-
-            if (isSkipping(fighter)) {
-                log += `⏸️ **${player.username}** tur atlıyor!\n`;
-            } else {
-                const playerDmg = calcDamage(fighter, enemy, usedSkill);
-                enemy.hp -= playerDmg;
-                if (usedSkill && skillIdx >= 0) {
-                    skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
-                }
-                for (let k = 0; k < skillCooldowns.length; k++) {
-                    if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
+                // ── Oyuncu hamlesi ──
+                let usedSkill = null;
+                let skillIdx = -1;
+                if (i.customId.startsWith('dg:skill:')) {
+                    skillIdx = parseInt(i.customId.split(':')[2]);
+                    usedSkill = skills[skillIdx] || null;
+                    if (!usedSkill) {
+                        await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                        return;
+                    }
+                    if ((skillCooldowns[skillIdx] || 0) > 0) {
+                        await safeReply(i, '⏳ Bu skill bekleme süresinde.');
+                        return;
+                    }
                 }
 
-                if (usedSkill) {
-                    log += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
-                    const eff = applyEffects(usedSkill, fighter, enemy);
-                    if (eff.length) log += eff.join(' ') + '\n';
+                // DOT işle
+                const dotLogs = processDotsAndStatuses(fighter);
+                let log = dotLogs.length ? dotLogs.join('\n') + '\n' : '';
+
+                if (isSkipping(fighter)) {
+                    log += `⏸️ **${player.username}** tur atlıyor!\n`;
                 } else {
-                    log += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
+                    const playerDmg = calcDamage(fighter, enemy, usedSkill);
+                    enemy.hp -= playerDmg;
+                    if (usedSkill && skillIdx >= 0) {
+                        skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
+                    }
+                    for (let k = 0; k < skillCooldowns.length; k++) {
+                        if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
+                    }
+
+                    if (usedSkill) {
+                        log += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
+                        const eff = applyEffects(usedSkill, fighter, enemy);
+                        if (eff.length) log += eff.join(' ') + '\n';
+                    } else {
+                        log += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
+                    }
                 }
-            }
 
-            // ── Düşman öldü ──
-            if (enemy.hp <= 0) {
-                const goldRoom = Math.floor(Math.random() * 120 + 60);
-                totalExpGained += enemy.exp;
-                totalGoldGained += goldRoom;
-                log += `✅ **${enemy.name}** yenildi! +${enemy.exp} EXP +${goldRoom} 💰\n`;
+                // ── Düşman öldü ──
+                if (enemy.hp <= 0) {
+                    const goldRoom = Math.floor(Math.random() * 120 + 60);
+                    totalExpGained += enemy.exp;
+                    totalGoldGained += goldRoom;
+                    log += `✅ **${enemy.name}** yenildi! +${enemy.exp} EXP +${goldRoom} 💰\n`;
 
-                if (currentRoom >= totalRooms) {
-                    // Zindan tamamlandı!
-                    collector.stop('done');
-                    player.inBattle = false;
-                    totalDiamondGained += dungeon.rewards.diamond;
-                    const bonusGold = Math.floor(Math.random() * (dungeon.rewards.gold[1] - dungeon.rewards.gold[0]) + dungeon.rewards.gold[0]);
-                    totalGoldGained += bonusGold;
-                    totalExpGained += dungeon.rewards.expBonus;
-                    player.gold += totalGoldGained;
-                    player.diamond += totalDiamondGained;
-                    player.hp = Math.min(player.maxHp, Math.max(1, fighter.hp));
-                    await player.save();
-                    await addExp(player, totalExpGained, message.channel);
-                    await checkAchievements(player, message.channel);
+                    if (currentRoom >= totalRooms) {
+                        // Zindan tamamlandı!
+                        collector.stop('done');
+                        player.inBattle = false;
+                        totalDiamondGained += dungeon.rewards.diamond;
+                        const bonusGold = Math.floor(Math.random() * (dungeon.rewards.gold[1] - dungeon.rewards.gold[0]) + dungeon.rewards.gold[0]);
+                        totalGoldGained += bonusGold;
+                        totalExpGained += dungeon.rewards.expBonus;
+                        player.gold += totalGoldGained;
+                        player.diamond += totalDiamondGained;
+                        player.hp = Math.min(player.maxHp, Math.max(1, fighter.hp));
+                        await player.save();
+                        await addExp(player, totalExpGained, message.channel);
+                        await checkAchievements(player, message.channel);
 
-                    const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
-                    const doneEmbed = new EmbedBuilder()
-                        .setColor(0xf1c40f)
-                        .setTitle('🏆 Zindan Tamamlandı!')
-                        .setDescription(`${dungeon.name} tamamen temizlendi!`)
-                        .addFields(
-                            { name: '❤️ Kalan HP', value: `${hpBar(fighter.hp, fighter.maxHp)} ${pct}%`, inline: false },
-                            { name: '🎁 Toplam Ödüller', value: `💰 +${totalGoldGained} Altın\n💎 +${totalDiamondGained} Elmas\n📈 +${totalExpGained} EXP`, inline: true },
-                            { name: '🔥 Boss Bonus', value: `+${dungeon.rewards.expBonus} EXP\n+${bonusGold} 💰 ekstra`, inline: true }
-                        )
-                        .setFooter({ text: `⚡ Kurayami RPG • ${dungeon.name}` });
-                    await msg.edit({ embeds: [doneEmbed], components: [] });
+                        const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
+                        const doneEmbed = new EmbedBuilder()
+                            .setColor(0xf1c40f)
+                            .setTitle('🏆 Zindan Tamamlandı!')
+                            .setDescription(`${dungeon.name} tamamen temizlendi!`)
+                            .addFields(
+                                { name: '❤️ Kalan HP', value: `${hpBar(fighter.hp, fighter.maxHp)} ${pct}%`, inline: false },
+                                { name: '🎁 Toplam Ödüller', value: `💰 +${totalGoldGained} Altın\n💎 +${totalDiamondGained} Elmas\n📈 +${totalExpGained} EXP`, inline: true },
+                                { name: '🔥 Boss Bonus', value: `+${dungeon.rewards.expBonus} EXP\n+${bonusGold} 💰 ekstra`, inline: true }
+                            )
+                            .setFooter({ text: `⚡ Kurayami RPG • ${dungeon.name}` });
+                        await msg.edit({ embeds: [doneEmbed], components: [] });
+                        return;
+                    }
+
+                    // ── Sonraki oda ──
+                    currentRoom++;
+                    enemy = getEnemy(currentRoom);
+                    const isBoss = currentRoom >= totalRooms;
+                    log += isBoss
+                        ? `\n💀 **SON ODA** — ${enemy.emoji} **${enemy.name}** BOSS ÇIKTI!`
+                        : `\n🚪 Oda **${currentRoom}** — ${enemy.emoji} **${enemy.name}** belirdi!`;
+                    await msg.edit({ embeds: [makeEmbed(log)], components: buildButtons() });
                     return;
                 }
 
-                // ── Sonraki oda ──
-                currentRoom++;
-                enemy = getEnemy(currentRoom);
-                const isBoss = currentRoom >= totalRooms;
-                log += isBoss
-                    ? `\n💀 **SON ODA** — ${enemy.emoji} **${enemy.name}** BOSS ÇIKTI!`
-                    : `\n🚪 Oda **${currentRoom}** — ${enemy.emoji} **${enemy.name}** belirdi!`;
-                await msg.edit({ embeds: [makeEmbed(log)], components: buildButtons() });
-                return;
-            }
+                // ── Düşman saldırısı ──
+                const enemyDotLogs = processDotsAndStatuses(enemy);
+                if (enemyDotLogs.length) log += enemyDotLogs.join('\n') + '\n';
 
-            // ── Düşman saldırısı ──
-            const enemyDotLogs = processDotsAndStatuses(enemy);
-            if (enemyDotLogs.length) log += enemyDotLogs.join('\n') + '\n';
-
-            if (!isSkipping(enemy)) {
-                const enemyDmg = Math.max(1, Math.floor(enemy.power * 1.5 - fighter.defense / 2 + Math.random() * 12));
-                fighter.hp -= enemyDmg;
-                log += `🔴 **${enemy.name}** → **${enemyDmg}** hasar!`;
-            } else {
-                log += `⏸️ **${enemy.name}** tur atlıyor...`;
-            }
-
-            // ── Oyuncu öldü ──
-            if (fighter.hp <= 0) {
-                if (fighter.hasRevive) {
-                    fighter.hp = Math.floor(fighter.maxHp * 0.3);
-                    fighter.hasRevive = false;
-                    log += '\n✨ Ölümden döndün! (%30 HP)';
+                if (!isSkipping(enemy)) {
+                    const enemyDmg = Math.max(1, Math.floor(enemy.power * 1.5 - fighter.defense / 2 + Math.random() * 12));
+                    fighter.hp -= enemyDmg;
+                    log += `🔴 **${enemy.name}** → **${enemyDmg}** hasar!`;
                 } else {
-                    collector.stop('lose');
-                    player.inBattle = false;
-                    player.hp = 1;
-                    player.gold += Math.floor(totalGoldGained / 2);
-                    await player.save();
-                    if (totalExpGained > 0) await addExp(player, Math.floor(totalExpGained / 2), null);
-                    await msg.edit({
-                        embeds: [new EmbedBuilder().setColor(0xe74c3c).setTitle('💀 Zindanda Düştün!')
-                            .setDescription(`${enemy.emoji} **${enemy.name}** seni alt etti!\nKazancının yarısı alındı.`)
-                            .addFields({ name: '🎁 Alınan', value: `💰 +${Math.floor(totalGoldGained / 2)} | 📈 +${Math.floor(totalExpGained / 2)} EXP`, inline: true })
-                            .setFooter({ text: '⚡ Kurayami RPG • Dungeon' })],
-                        components: []
-                    });
-                    return;
+                    log += `⏸️ **${enemy.name}** tur atlıyor...`;
                 }
-            }
+
+                // ── Oyuncu öldü ──
+                if (fighter.hp <= 0) {
+                    if (fighter.hasRevive) {
+                        fighter.hp = Math.floor(fighter.maxHp * 0.3);
+                        fighter.hasRevive = false;
+                        log += '\n✨ Ölümden döndün! (%30 HP)';
+                    } else {
+                        collector.stop('lose');
+                        player.inBattle = false;
+                        player.hp = 1;
+                        player.gold += Math.floor(totalGoldGained / 2);
+                        await player.save();
+                        if (totalExpGained > 0) await addExp(player, Math.floor(totalExpGained / 2), null);
+                        await msg.edit({
+                            embeds: [new EmbedBuilder().setColor(0xe74c3c).setTitle('💀 Zindanda Düştün!')
+                                .setDescription(`${enemy.emoji} **${enemy.name}** seni alt etti!\nKazancının yarısı alındı.`)
+                                .addFields({ name: '🎁 Alınan', value: `💰 +${Math.floor(totalGoldGained / 2)} | 📈 +${Math.floor(totalExpGained / 2)} EXP`, inline: true })
+                                .setFooter({ text: '⚡ Kurayami RPG • Dungeon' })],
+                            components: []
+                        });
+                        return;
+                    }
+                }
 
                 await msg.edit({ embeds: [makeEmbed(log)], components: buildButtons() });
             } catch (err) {

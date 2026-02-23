@@ -145,147 +145,147 @@ module.exports = {
             try {
                 let actionLog = '';
 
-            if (i.customId === 'hunt:flee') {
-                const fled = Math.random() < 0.5;
-                player.inBattle = false;
-                await player.save();
-                const result = fled ? '🏃 Başarıyla kaçtın!' : '💨 Kaçmaya çalıştın ama başaramadın! Savaş bitti.';
-                await msg.edit({
-                    embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription(result).setFooter({ text: '⚡ Kurayami RPG' })],
-                    components: []
-                });
-                collector.stop('fled');
-                return;
-            }
-
-            // ── Skill / Saldırı tespiti ──
-            let usedSkill = null;
-            let skillIdx = -1;
-            if (i.customId.startsWith('hunt:skill:')) {
-                skillIdx = parseInt(i.customId.split(':')[2]);
-                usedSkill = skills[skillIdx] || null;
-                if (!usedSkill) {
-                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                if (i.customId === 'hunt:flee') {
+                    const fled = Math.random() < 0.5;
+                    player.inBattle = false;
+                    await player.save();
+                    const result = fled ? '🏃 Başarıyla kaçtın!' : '💨 Kaçmaya çalıştın ama başaramadın! Savaş bitti.';
+                    await msg.edit({
+                        embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription(result).setFooter({ text: '⚡ Kurayami RPG' })],
+                        components: []
+                    });
+                    collector.stop('fled');
                     return;
                 }
-                if ((skillCooldowns[skillIdx] || 0) > 0) {
-                    await safeReply(i, '⏳ Bu skill bekleme süresinde.');
-                    return;
-                }
-            }
 
-            // DOT işleme (saldırıdan önce)
-            const dotLogs = processDotsAndStatuses(fighter);
-            if (dotLogs.length) actionLog += dotLogs.join('\n') + '\n';
-
-            // Oyuncu saldırı
-            const playerDmg = calcDamage(fighter, enemy, usedSkill);
-            enemy.hp -= playerDmg;
-            if (usedSkill && skillIdx >= 0) skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
-            for (let k = 0; k < skillCooldowns.length; k++) if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
-
-            if (usedSkill) {
-                actionLog += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
-                const effectLogs = applyEffects(usedSkill, fighter, enemy);
-                if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
-            } else {
-                actionLog += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
-            }
-
-            // Düşman ölümü
-            if (enemy.hp <= 0) {
-                collector.stop('win');
-                player.inBattle = false;
-                player.totalKills += 1;
-                player.totalDamageDealt = BigInt(player.totalDamageDealt) + BigInt(playerDmg);
-                player.winStreak += 1;
-                if (player.winStreak > player.bestWinStreak) player.bestWinStreak = player.winStreak;
-
-                // Drop
-                const drops = rollNpcDrop(npc.tier);
-                for (const drop of drops) {
-                    if (drop.type === 'gold') player.gold += drop.amount;
-                    if (drop.type === 'diamond') player.diamond += drop.amount;
-                    if (drop.type === 'item') {
-                        await InventoryItem.create({
-                            playerId: player.id,
-                            itemId: drop.item.id,
-                            itemType: drop.item.type || 'material',
-                            tier: drop.item.tier || 'common',
-                            quantity: 1,
-                            data: drop.item,
-                        });
+                // ── Skill / Saldırı tespiti ──
+                let usedSkill = null;
+                let skillIdx = -1;
+                if (i.customId.startsWith('hunt:skill:')) {
+                    skillIdx = parseInt(i.customId.split(':')[2]);
+                    usedSkill = skills[skillIdx] || null;
+                    if (!usedSkill) {
+                        await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                        return;
+                    }
+                    if ((skillCooldowns[skillIdx] || 0) > 0) {
+                        await safeReply(i, '⏳ Bu skill bekleme süresinde.');
+                        return;
                     }
                 }
 
-                const goldDrop = drops.find(d => d.type === 'gold')?.amount || (npc.gold ? Math.floor(Math.random() * (npc.gold[1] - npc.gold[0]) + npc.gold[0]) : 50);
-                const diamondDrop = drops.find(d => d.type === 'diamond')?.amount || 0;
-                const itemDrop = drops.find(d => d.type === 'item');
+                // DOT işleme (saldırıdan önce)
+                const dotLogs = processDotsAndStatuses(fighter);
+                if (dotLogs.length) actionLog += dotLogs.join('\n') + '\n';
 
-                player.gold += goldDrop;
+                // Oyuncu saldırı
+                const playerDmg = calcDamage(fighter, enemy, usedSkill);
+                enemy.hp -= playerDmg;
+                if (usedSkill && skillIdx >= 0) skillCooldowns[skillIdx] = usedSkill.cooldown || 2;
+                for (let k = 0; k < skillCooldowns.length; k++) if (skillCooldowns[k] > 0 && k !== skillIdx) skillCooldowns[k]--;
 
-                const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
-                const hpBar = '🟩'.repeat(Math.round(pct / 10)) + '⬛'.repeat(10 - Math.round(pct / 10));
-
-                const wonEmbed = new EmbedBuilder()
-                    .setColor(TIER_COLOR[npc.tier] || 0x2ecc71)
-                    .setTitle('🏆 Zafer!')
-                    .setDescription(`${npc.emoji} **${npc.name}** yenildi!`)
-                    .addFields(
-                        { name: '❤️ Kalan HP', value: `${hpBar} ${pct}%`, inline: false },
-                        { name: '🎁 Ödüller', value: `💰 +${goldDrop} Altın\n💎 +${diamondDrop} Elmas${itemDrop ? `\n📦 ${itemDrop.item.emoji || '📦'} ${itemDrop.item.name}` : ''}`, inline: true },
-                        { name: '📈 Kazanç', value: `+${npc.exp} EXP\n🔥 Seri: ${player.winStreak}`, inline: true },
-                    )
-                    .setFooter({ text: `⚡ Kurayami RPG • Hunt • Tier: ${npc.tier.toUpperCase()}` });
-
-
-                await addExp(player, npc.exp, message.channel);
-                await player.save();
-                await checkAchievements(player, message.channel);
-                await msg.edit({ embeds: [wonEmbed], components: [] });
-                return;
-            }
-
-            // Düşman DOT işleme
-            const enemyDotLogs = processDotsAndStatuses(enemy);
-            if (enemyDotLogs.length) actionLog += enemyDotLogs.join(' ') + '\n';
-
-            // Düşman saldırı
-            if (!isSkipping(enemy)) {
-                const npcDmg = Math.max(1, Math.floor((enemy.power * 2) - (fighter.defense / 2) + Math.floor(Math.random() * 10)));
-                fighter.hp -= npcDmg;
-                actionLog += `🔴 **${npc.name}** → **${npcDmg}** hasar verdi!`;
-            } else {
-                actionLog += `⏸️ **${npc.name}** tur atlıyor...`;
-            }
-
-            // Oyuncu ölüm
-            if (fighter.hp <= 0) {
-                if (fighter.hasRevive) {
-                    fighter.hp = Math.floor(fighter.maxHp * 0.3);
-                    fighter.hasRevive = false;
-                    actionLog += '\n✨ Ölümden döndün!';
+                if (usedSkill) {
+                    actionLog += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
+                    const effectLogs = applyEffects(usedSkill, fighter, enemy);
+                    if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
                 } else {
-                    collector.stop('lose');
+                    actionLog += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
+                }
+
+                // Düşman ölümü
+                if (enemy.hp <= 0) {
+                    collector.stop('win');
                     player.inBattle = false;
-                    player.hp = 1;
-                    player.winStreak = 0;
+                    player.totalKills += 1;
+                    player.totalDamageDealt = BigInt(player.totalDamageDealt) + BigInt(playerDmg);
+                    player.winStreak += 1;
+                    if (player.winStreak > player.bestWinStreak) player.bestWinStreak = player.winStreak;
+
+                    // Drop
+                    const drops = rollNpcDrop(npc.tier);
+                    for (const drop of drops) {
+                        if (drop.type === 'gold') player.gold += drop.amount;
+                        if (drop.type === 'diamond') player.diamond += drop.amount;
+                        if (drop.type === 'item') {
+                            await InventoryItem.create({
+                                playerId: player.id,
+                                itemId: drop.item.id,
+                                itemType: drop.item.type || 'material',
+                                tier: drop.item.tier || 'common',
+                                quantity: 1,
+                                data: drop.item,
+                            });
+                        }
+                    }
+
+                    const goldDrop = drops.find(d => d.type === 'gold')?.amount || (npc.gold ? Math.floor(Math.random() * (npc.gold[1] - npc.gold[0]) + npc.gold[0]) : 50);
+                    const diamondDrop = drops.find(d => d.type === 'diamond')?.amount || 0;
+                    const itemDrop = drops.find(d => d.type === 'item');
+
+                    player.gold += goldDrop;
+
+                    const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
+                    const hpBar = '🟩'.repeat(Math.round(pct / 10)) + '⬛'.repeat(10 - Math.round(pct / 10));
+
+                    const wonEmbed = new EmbedBuilder()
+                        .setColor(TIER_COLOR[npc.tier] || 0x2ecc71)
+                        .setTitle('🏆 Zafer!')
+                        .setDescription(`${npc.emoji} **${npc.name}** yenildi!`)
+                        .addFields(
+                            { name: '❤️ Kalan HP', value: `${hpBar} ${pct}%`, inline: false },
+                            { name: '🎁 Ödüller', value: `💰 +${goldDrop} Altın\n💎 +${diamondDrop} Elmas${itemDrop ? `\n📦 ${itemDrop.item.emoji || '📦'} ${itemDrop.item.name}` : ''}`, inline: true },
+                            { name: '📈 Kazanç', value: `+${npc.exp} EXP\n🔥 Seri: ${player.winStreak}`, inline: true },
+                        )
+                        .setFooter({ text: `⚡ Kurayami RPG • Hunt • Tier: ${npc.tier.toUpperCase()}` });
+
+
+                    await addExp(player, npc.exp, message.channel);
                     await player.save();
-                    const lostEmbed = new EmbedBuilder()
-                        .setColor(0xe74c3c).setTitle('💀 Yenildin!')
-                        .setDescription(`**${npc.emoji} ${npc.name}** seni alt etti! HP 1\'e düştü.`)
-                        .setFooter({ text: '⚡ Kurayami RPG • Hunt' });
-                    await msg.edit({ embeds: [lostEmbed], components: [] });
+                    await checkAchievements(player, message.channel);
+                    await msg.edit({ embeds: [wonEmbed], components: [] });
                     return;
                 }
-            }
 
-            turn++;
-            const newEmbed = combatEmbed(
-                { name: player.username, hp: fighter.hp, maxHp: fighter.maxHp },
-                { name: `${npc.emoji} ${npc.name}`, hp: enemy.hp, maxHp: enemy.maxHp },
-                actionLog, turn, color, formatSkills(skills, skillCooldowns)
-            );
+                // Düşman DOT işleme
+                const enemyDotLogs = processDotsAndStatuses(enemy);
+                if (enemyDotLogs.length) actionLog += enemyDotLogs.join(' ') + '\n';
+
+                // Düşman saldırı
+                if (!isSkipping(enemy)) {
+                    const npcDmg = Math.max(1, Math.floor((enemy.power * 2) - (fighter.defense / 2) + Math.floor(Math.random() * 10)));
+                    fighter.hp -= npcDmg;
+                    actionLog += `🔴 **${npc.name}** → **${npcDmg}** hasar verdi!`;
+                } else {
+                    actionLog += `⏸️ **${npc.name}** tur atlıyor...`;
+                }
+
+                // Oyuncu ölüm
+                if (fighter.hp <= 0) {
+                    if (fighter.hasRevive) {
+                        fighter.hp = Math.floor(fighter.maxHp * 0.3);
+                        fighter.hasRevive = false;
+                        actionLog += '\n✨ Ölümden döndün!';
+                    } else {
+                        collector.stop('lose');
+                        player.inBattle = false;
+                        player.hp = 1;
+                        player.winStreak = 0;
+                        await player.save();
+                        const lostEmbed = new EmbedBuilder()
+                            .setColor(0xe74c3c).setTitle('💀 Yenildin!')
+                            .setDescription(`**${npc.emoji} ${npc.name}** seni alt etti! HP 1\'e düştü.`)
+                            .setFooter({ text: '⚡ Kurayami RPG • Hunt' });
+                        await msg.edit({ embeds: [lostEmbed], components: [] });
+                        return;
+                    }
+                }
+
+                turn++;
+                const newEmbed = combatEmbed(
+                    { name: player.username, hp: fighter.hp, maxHp: fighter.maxHp },
+                    { name: `${npc.emoji} ${npc.name}`, hp: enemy.hp, maxHp: enemy.maxHp },
+                    actionLog, turn, color, formatSkills(skills, skillCooldowns)
+                );
                 await msg.edit({ embeds: [newEmbed], components: buildButtons() });
             } catch (err) {
                 console.error('Hunt interaction error:', err);
