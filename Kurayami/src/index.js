@@ -54,16 +54,29 @@ for (const file of eventFiles) {
     }
 }
 
+// Client hata dinleyici
+client.on('error', (err) => console.error('❌ Discord client hatası:', err));
+client.on('warn', (info) => console.warn('⚠️ Discord uyarı:', info));
+
 // DB sync ve bot başlat
 (async () => {
     try {
+        console.log('🔄 PostgreSQL bağlantısı test ediliyor...');
         await sequelize.authenticate();
         console.log('✅ PostgreSQL bağlantısı başarılı!');
-        await sequelize.sync({ alter: true });
+
+        console.log('🔄 Veritabanı modelleri senkronize ediliyor...');
+        await sequelize.sync(); // alter:true kaldırıldı — free DB'de zaman aşımına neden oluyordu
         console.log('✅ Veritabanı modelleri senkronize edildi!');
+
+        if (!process.env.DISCORD_TOKEN) {
+            throw new Error('DISCORD_TOKEN env değişkeni tanımlanmamış!');
+        }
+        console.log('🔄 Discord\'a giriş yapılıyor...');
         await client.login(process.env.DISCORD_TOKEN);
+        console.log('✅ Discord login başarılı!');
     } catch (error) {
-        console.error('❌ Başlatma hatası:', error);
+        console.error('❌ Başlatma hatası:', error.message || error);
         process.exit(1);
     }
 })();
