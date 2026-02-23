@@ -10,10 +10,11 @@ const battleSessions = require('../utils/battleSessions');
 const { getOrCreateBattleThread } = require('../utils/threadHelper');
 
 const BOSSES_DATA = require('../data/bosses.json');
+const RACE_SKILLS = require('../data/race_skills.json');
 
 function getAllBosses() {
     const all = [];
-    for (const key of ['bleach', 'aot', 'sololeveling']) {
+    for (const key of ['bleach', 'aot', 'sololeveling', 'crossover']) {
         if (BOSSES_DATA[key]) all.push(...BOSSES_DATA[key]);
     }
     return all;
@@ -31,22 +32,26 @@ function pickBoss(playerLevel, bossId) {
 }
 
 function getPlayerSkills(player) {
-    if (!player.raceForm) return [];
     const race = player.race;
+    const evolution = player.raceEvolution || 0;
+    if (!race || evolution === 0) return [];
+
     if (race === 'shinigami') {
-        const zanpakutos = require('../data/zanpakutos.json');
-        const z = zanpakutos.find(z => z.id === player.raceData?.zanpakuto);
-        if (z) return player.raceEvolution >= 2 ? z.bankai : z.shikai;
+        const id = player.raceData?.zanpakuto || 'default_shinigami';
+        const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
+        return z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
     }
     if (race === 'hollow') {
-        const espadas = require('../data/espadas.json');
-        const e = espadas.find(e => e.id === player.raceData?.espada);
-        if (e) return e.skills;
+        const id = player.raceData?.espada || 'default_hollow';
+        const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
+        return e?.skills || [];
     }
-    if (race === 'titan') {
-        const titans = require('../data/titans.json');
-        const t = titans.find(t => t.id === player.raceData?.titan);
-        if (t) return t.skills;
+    if (race === 'quincy') {
+        const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
+        if (!q) return [];
+        if (evolution >= 3) return q.yhwach;
+        if (evolution >= 2) return q.sternritter;
+        return q.vollstandig;
     }
     return [];
 }
@@ -142,159 +147,159 @@ module.exports = {
             try {
                 let actionLog = '';
 
-            // Flee
-            if (i.customId === 'bh:flee') {
-                player.inBattle = false;
-                await player.save();
-                await msg.edit({
-                    embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('🏃 Boss savaşından kaçtın!').setFooter({ text: '⚡ Kurayami RPG' })],
-                    components: []
-                });
-                collector.stop('fled');
-                return;
-            }
-
-            let usedSkill = null;
-            if (i.customId.startsWith('bh:skill:')) {
-                const idx = parseInt(i.customId.split(':')[2]);
-                usedSkill = skills[idx] || null;
-                if (!usedSkill) {
-                    await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                // Flee
+                if (i.customId === 'bh:flee') {
+                    player.inBattle = false;
+                    await player.save();
+                    await msg.edit({
+                        embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('🏃 Boss savaşından kaçtın!').setFooter({ text: '⚡ Kurayami RPG' })],
+                        components: []
+                    });
+                    collector.stop('fled');
                     return;
                 }
-            }
 
-            const playerDmg = calcDamage(fighter, boss, usedSkill);
-            boss.hp -= playerDmg;
-            actionLog += `⚔️ **${player.username}** ${usedSkill ? `**${usedSkill.name}** ile` : ''} **${playerDmg}** hasar verdi!\n`;
-            if (usedSkill) {
-                const effectLogs = applyEffects(usedSkill, fighter, boss);
-                if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
-            }
-
-            // Boss ölümü
-            if (boss.hp <= 0) {
-                collector.stop('win');
-                player.inBattle = false;
-                player.totalKills += 1;
-                player.bossKills = (player.bossKills || 0) + 1;
-                player.totalDamageDealt = BigInt(player.totalDamageDealt) + BigInt(playerDmg);
-                player.winStreak += 1;
-                if (player.winStreak > player.bestWinStreak) player.bestWinStreak = player.winStreak;
-
-                // Drop hesapla
-                const drops = boss.drops;
-                const goldGained = drops.gold
-                    ? Math.floor(Math.random() * (drops.gold[1] - drops.gold[0]) + drops.gold[0])
-                    : 0;
-                const diamondGained = drops.diamond || 0;
-                const expGained = Math.floor(boss.hp / 10) + 200;
-
-                player.gold += goldGained;
-                player.diamond += diamondGained;
-
-                // Race item drop
-                let raceItemStr = '';
-                if (drops.raceItem && Math.random() < (drops.raceItemChance || 0.1)) {
-                    await InventoryItem.create({
-                        playerId: player.id,
-                        itemId: drops.raceItem,
-                        itemType: 'race_item',
-                        tier: 'legendary',
-                        quantity: 1,
-                        data: { name: drops.raceItem, emoji: '🌟', type: 'race_item' },
-                    });
-                    raceItemStr = `\n🌟 **${drops.raceItem}** (Irk İtemi!)`;
+                let usedSkill = null;
+                if (i.customId.startsWith('bh:skill:')) {
+                    const idx = parseInt(i.customId.split(':')[2]);
+                    usedSkill = skills[idx] || null;
+                    if (!usedSkill) {
+                        await safeReply(i, '❌ Bu skill kullanılamıyor.');
+                        return;
+                    }
                 }
 
-                await player.save();
-                await addExp(player, expGained, message.channel);
-                await checkAchievements(player, message.channel);
+                const playerDmg = calcDamage(fighter, boss, usedSkill);
+                boss.hp -= playerDmg;
+                actionLog += `⚔️ **${player.username}** ${usedSkill ? `**${usedSkill.name}** ile` : ''} **${playerDmg}** hasar verdi!\n`;
+                if (usedSkill) {
+                    const effectLogs = applyEffects(usedSkill, fighter, boss);
+                    if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
+                }
 
-                const wonEmbed = new EmbedBuilder()
-                    .setColor(0xf1c40f)
-                    .setTitle('🏆 Boss Yenildi!')
-                    .setDescription(`${boss.emoji} **${boss.name}** bertaraf edildi!`)
-                    .addFields(
-                        {
-                            name: '🎁 Ödüller',
-                            value: `💰 +${goldGained} Altın\n💎 +${diamondGained} Elmas\n📈 +${expGained} EXP${raceItemStr}`,
-                            inline: true
-                        },
-                        { name: '📊 Boss Tier', value: tierLabel, inline: true }
-                    )
-                    .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' });
+                // Boss ölümü
+                if (boss.hp <= 0) {
+                    collector.stop('win');
+                    player.inBattle = false;
+                    player.totalKills += 1;
+                    player.bossKills = (player.bossKills || 0) + 1;
+                    player.totalDamageDealt = BigInt(player.totalDamageDealt) + BigInt(playerDmg);
+                    player.winStreak += 1;
+                    if (player.winStreak > player.bestWinStreak) player.bestWinStreak = player.winStreak;
 
-                await msg.edit({ embeds: [wonEmbed], components: [] });
-                return;
-            }
+                    // Drop hesapla
+                    const drops = boss.drops;
+                    const goldGained = drops.gold
+                        ? Math.floor(Math.random() * (drops.gold[1] - drops.gold[0]) + drops.gold[0])
+                        : 0;
+                    const diamondGained = drops.diamond || 0;
+                    const expGained = Math.floor(boss.hp / 10) + 200;
 
-            // Boss DOT
-            const dotLogs = processDotsAndStatuses(boss);
-            if (dotLogs.length) actionLog += dotLogs.join(' ') + '\n';
+                    player.gold += goldGained;
+                    player.diamond += diamondGained;
 
-            // Boss saldırı — cooldown sistemi
-            if (!isSkipping(boss)) {
-                // Boss skill mi, normal saldırı mı?
-                let bossUsedSkill = null;
-                if (boss.skills?.length) {
-                    for (const sk of boss.skills) {
-                        const cd = boss.skillCooldowns[sk.name] || 0;
-                        if (cd <= 0) {
-                            bossUsedSkill = sk;
-                            boss.skillCooldowns[sk.name] = sk.cooldown;
-                            break;
+                    // Race item drop
+                    let raceItemStr = '';
+                    if (drops.raceItem && Math.random() < (drops.raceItemChance || 0.1)) {
+                        await InventoryItem.create({
+                            playerId: player.id,
+                            itemId: drops.raceItem,
+                            itemType: 'race_item',
+                            tier: 'legendary',
+                            quantity: 1,
+                            data: { name: drops.raceItem, emoji: '🌟', type: 'race_item' },
+                        });
+                        raceItemStr = `\n🌟 **${drops.raceItem}** (Irk İtemi!)`;
+                    }
+
+                    await player.save();
+                    await addExp(player, expGained, message.channel);
+                    await checkAchievements(player, message.channel);
+
+                    const wonEmbed = new EmbedBuilder()
+                        .setColor(0xf1c40f)
+                        .setTitle('🏆 Boss Yenildi!')
+                        .setDescription(`${boss.emoji} **${boss.name}** bertaraf edildi!`)
+                        .addFields(
+                            {
+                                name: '🎁 Ödüller',
+                                value: `💰 +${goldGained} Altın\n💎 +${diamondGained} Elmas\n📈 +${expGained} EXP${raceItemStr}`,
+                                inline: true
+                            },
+                            { name: '📊 Boss Tier', value: tierLabel, inline: true }
+                        )
+                        .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' });
+
+                    await msg.edit({ embeds: [wonEmbed], components: [] });
+                    return;
+                }
+
+                // Boss DOT
+                const dotLogs = processDotsAndStatuses(boss);
+                if (dotLogs.length) actionLog += dotLogs.join(' ') + '\n';
+
+                // Boss saldırı — cooldown sistemi
+                if (!isSkipping(boss)) {
+                    // Boss skill mi, normal saldırı mı?
+                    let bossUsedSkill = null;
+                    if (boss.skills?.length) {
+                        for (const sk of boss.skills) {
+                            const cd = boss.skillCooldowns[sk.name] || 0;
+                            if (cd <= 0) {
+                                bossUsedSkill = sk;
+                                boss.skillCooldowns[sk.name] = sk.cooldown;
+                                break;
+                            }
+                        }
+                        // Cooldownları azalt
+                        for (const key in boss.skillCooldowns) {
+                            if (boss.skillCooldowns[key] > 0) boss.skillCooldowns[key]--;
                         }
                     }
-                    // Cooldownları azalt
-                    for (const key in boss.skillCooldowns) {
-                        if (boss.skillCooldowns[key] > 0) boss.skillCooldowns[key]--;
+
+                    let bossDmg;
+                    if (bossUsedSkill) {
+                        bossDmg = Math.max(1, bossUsedSkill.damage - Math.floor(fighter.defense / 2));
+                        actionLog += `💀 **${boss.name}** → **${bossUsedSkill.name}** ile **${bossDmg}** hasar verdi!\n`;
+                        // Boss skill efekti (self heal)
+                        if (bossUsedSkill.effect?.self?.healPercent) {
+                            const heal = Math.floor(boss.maxHp * bossUsedSkill.effect.self.healPercent);
+                            boss.hp = Math.min(boss.maxHp, boss.hp + heal);
+                            actionLog += `💚 **${boss.name}** ${heal} HP iyileşti!\n`;
+                        }
+                    } else {
+                        bossDmg = Math.max(1, Math.floor(boss.power * 1.5 - fighter.defense / 2 + Math.random() * 15));
+                        actionLog += `🔴 **${boss.name}** → **${bossDmg}** hasar verdi!`;
+                    }
+
+                    fighter.hp -= bossDmg;
+                } else {
+                    actionLog += `⏸️ **${boss.name}** tur atlıyor...`;
+                }
+
+                // Oyuncu ölüm
+                if (fighter.hp <= 0) {
+                    if (fighter.hasRevive) {
+                        fighter.hp = Math.floor(fighter.maxHp * 0.3);
+                        fighter.hasRevive = false;
+                        actionLog += '\n✨ Ölümden döndün!';
+                    } else {
+                        collector.stop('lose');
+                        player.inBattle = false;
+                        player.hp = 1;
+                        player.winStreak = 0;
+                        await player.save();
+                        const lostEmbed = new EmbedBuilder()
+                            .setColor(0xe74c3c).setTitle('💀 Boss Seni Alt Etti!')
+                            .setDescription(`${boss.emoji} **${boss.name}** seni yendi! Güç kazan ve tekrar gel.`)
+                            .addFields({ name: '💡 İpucu', value: 'Daha yüksek tier item edin ve stat puanı dağıt!', inline: false })
+                            .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' });
+                        await msg.edit({ embeds: [lostEmbed], components: [] });
+                        return;
                     }
                 }
 
-                let bossDmg;
-                if (bossUsedSkill) {
-                    bossDmg = Math.max(1, bossUsedSkill.damage - Math.floor(fighter.defense / 2));
-                    actionLog += `💀 **${boss.name}** → **${bossUsedSkill.name}** ile **${bossDmg}** hasar verdi!\n`;
-                    // Boss skill efekti (self heal)
-                    if (bossUsedSkill.effect?.self?.healPercent) {
-                        const heal = Math.floor(boss.maxHp * bossUsedSkill.effect.self.healPercent);
-                        boss.hp = Math.min(boss.maxHp, boss.hp + heal);
-                        actionLog += `💚 **${boss.name}** ${heal} HP iyileşti!\n`;
-                    }
-                } else {
-                    bossDmg = Math.max(1, Math.floor(boss.power * 1.5 - fighter.defense / 2 + Math.random() * 15));
-                    actionLog += `🔴 **${boss.name}** → **${bossDmg}** hasar verdi!`;
-                }
-
-                fighter.hp -= bossDmg;
-            } else {
-                actionLog += `⏸️ **${boss.name}** tur atlıyor...`;
-            }
-
-            // Oyuncu ölüm
-            if (fighter.hp <= 0) {
-                if (fighter.hasRevive) {
-                    fighter.hp = Math.floor(fighter.maxHp * 0.3);
-                    fighter.hasRevive = false;
-                    actionLog += '\n✨ Ölümden döndün!';
-                } else {
-                    collector.stop('lose');
-                    player.inBattle = false;
-                    player.hp = 1;
-                    player.winStreak = 0;
-                    await player.save();
-                    const lostEmbed = new EmbedBuilder()
-                        .setColor(0xe74c3c).setTitle('💀 Boss Seni Alt Etti!')
-                        .setDescription(`${boss.emoji} **${boss.name}** seni yendi! Güç kazan ve tekrar gel.`)
-                        .addFields({ name: '💡 İpucu', value: 'Daha yüksek tier item edin ve stat puanı dağıt!', inline: false })
-                        .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' });
-                    await msg.edit({ embeds: [lostEmbed], components: [] });
-                    return;
-                }
-            }
-
-            turn++;
+                turn++;
                 await msg.edit({ embeds: [makeBossEmbed(actionLog)], components: buildButtons() });
             } catch (err) {
                 console.error('Boss hunt interaction error:', err);
