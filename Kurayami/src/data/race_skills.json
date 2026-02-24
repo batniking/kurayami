@@ -297,5 +297,79 @@
                 }
             ]
         }
+    ],
+    "anime_special": [
+        {
+            "id": "anime_special_master",
+            "skills": [
+                {
+                    "name": "Rasengan",
+                    "power": 3.0,
+                    "cooldown": 3,
+                    "effect": {
+                        "enemy": {
+                            "stun": 0.3,
+                            "dot": {
+                                "damage": 50,
+                                "duration": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Chidori",
+                    "power": 2.8,
+                    "cooldown": 2,
+                    "effect": {
+                        "enemy": {
+                            "frozen": 0.4,
+                            "dot": {
+                                "damage": 40,
+                                "duration": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Kamehameha",
+                    "power": 4.5,
+                    "cooldown": 5,
+                    "effect": {
+                        "enemy": {
+                            "stun": 0.5,
+                            "burn": {
+                                "damage": 60,
+                                "duration": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Shadow Clone",
+                    "power": 2.0,
+                    "cooldown": 2,
+                    "effect": {
+                        "self": {
+                            "power": 50,
+                            "defense": 30
+                        }
+                    }
+                },
+                {
+                    "name": "Lightning Blade",
+                    "power": 3.5,
+                    "cooldown": 3,
+                    "effect": {
+                        "enemy": {
+                            "skip": 1,
+                            "dot": {
+                                "damage": 45,
+                                "duration": 3
+                            }
+                        }
+                    }
+                }
+            ]
+        }
     ]
 }

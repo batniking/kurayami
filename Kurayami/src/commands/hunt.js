@@ -102,6 +102,26 @@ module.exports = {
     description: 'NPC avla, EXP ve item kazan.',
     cooldown: 10,
     async execute(message) {
+        // Önce mevcut battle session'larını temizle
+        try {
+            const existingSessions = battleSessions.sessions;
+            for (const [messageId, session] of existingSessions) {
+                if (session.userId === message.author.id && ['bosshunt', 'hunt'].includes(session.type)) {
+                    console.log(`Clearing stuck battle session for user ${message.author.id}`);
+                    battleSessions.unregister(messageId);
+                    
+                    // Player'ın inBattle durumunu da düzelt
+                    const player = await Player.findOne({ where: { discordId: message.author.id } });
+                    if (player) {
+                        player.inBattle = false;
+                        await player.save();
+                    }
+                }
+            }
+        } catch (err) {
+            console.error('Error clearing battle sessions:', err);
+        }
+
         const player = await Player.findOne({ where: { discordId: message.author.id } });
         if (!player) return message.reply({ embeds: [errorEmbed('Önce `+start` ile karakter oluştur!')] });
         if (player.inBattle) return message.reply({ embeds: [errorEmbed('Zaten bir savaştasın!')] });
