@@ -100,9 +100,170 @@
             "emoji": "🩸",
             "type": "weapon",
             "stats": {
-                "power": 28
+                "power": 22,
+                "speed": 10
             },
             "race": null
+        },
+        {
+            "id": "antares_sword",
+            "name": "Antares Kılıcı",
+            "tier": "legendary",
+            "emoji": "⭐",
+            "type": "weapon",
+            "stats": {
+                "power": 45,
+                "speed": 20,
+                "defense": 15
+            },
+            "skills": [
+                {
+                    "name": "Stellar Burst",
+                    "damage": 150,
+                    "cooldown": 3,
+                    "description": "Yıldız enerjisi patlaması"
+                }
+            ],
+            "bossDrop": "antares_boss"
+        },
+        {
+            "id": "antares_mythical_sword",
+            "name": "Antares'in Ölümcül Kılıcı",
+            "tier": "mythic",
+            "emoji": "💫",
+            "type": "weapon",
+            "stats": {
+                "power": 95,
+                "speed": 35,
+                "defense": 25,
+                "hp": 150
+            },
+            "skills": [
+                {
+                    "name": "Cosmic Destruction",
+                    "damage": 350,
+                    "cooldown": 4,
+                    "description": "Kozmik yıkım saldırısı"
+                },
+                {
+                    "name": "Star Prison",
+                    "damage": 0,
+                    "cooldown": 6,
+                    "effect": {
+                        "enemy": {
+                            "stun": 2
+                        }
+                    },
+                    "description": "Yıldız hapsetme"
+                }
+            ],
+            "bossDrop": "antares_boss",
+            "bossDropChance": 0.03
+        },
+        {
+            "id": "void_reaper",
+            "name": "Void Reaper",
+            "tier": "mythic",
+            "emoji": "🌌",
+            "type": "weapon",
+            "stats": {
+                "power": 60,
+                "speed": 25,
+                "defense": 20
+            },
+            "skills": [
+                {
+                    "name": "Void Slash",
+                    "damage": 200,
+                    "cooldown": 4,
+                    "description": "Boşluk kesisi"
+                }
+            ],
+            "bossDrop": "void_lord"
+        },
+        {
+            "id": "shadow_monarch_sword",
+            "name": "Shadow Monarch Kılıcı",
+            "tier": "legendary",
+            "emoji": "🌑",
+            "type": "weapon",
+            "stats": {
+                "power": 50,
+                "speed": 30,
+                "defense": 10
+            },
+            "skills": [
+                {
+                    "name": "Shadow Strike",
+                    "damage": 180,
+                    "cooldown": 3,
+                    "description": "Gölge vuruşu"
+                }
+            ],
+            "bossDrop": "shadow_monarch_boss"
+        },
+        {
+            "id": "aizen_hogyoku_sword",
+            "name": "Hōgyoku Kılıcı",
+            "tier": "mythic",
+            "emoji": "💠",
+            "type": "weapon",
+            "stats": {
+                "power": 65,
+                "speed": 35,
+                "defense": 25
+            },
+            "skills": [
+                {
+                    "name": "Complete Hypnosis",
+                    "damage": 250,
+                    "cooldown": 5,
+                    "description": "Tam hipnoz"
+                }
+            ],
+            "bossDrop": "aizen_hogyoku"
+        },
+        {
+            "id": "ulquiorra_lanza",
+            "name": "Ulquiorra'nın Lanza'sı",
+            "tier": "legendary",
+            "emoji": "🦇",
+            "type": "weapon",
+            "stats": {
+                "power": 55,
+                "speed": 28,
+                "defense": 18
+            },
+            "skills": [
+                {
+                    "name": "Lanza del Relámpago",
+                    "damage": 220,
+                    "cooldown": 4,
+                    "description": "Şimşek mızrağı"
+                }
+            ],
+            "bossDrop": "ulquiorra"
+        },
+        {
+            "id": "yhwach_sword",
+            "name": "Yhwach'ın Kılıcı",
+            "tier": "mythic",
+            "emoji": "👑",
+            "type": "weapon",
+            "stats": {
+                "power": 70,
+                "speed": 40,
+                "defense": 30
+            },
+            "skills": [
+                {
+                    "name": "Almighty Strike",
+                    "damage": 300,
+                    "cooldown": 6,
+                    "description": "Her şeye gücü yeten vuruş"
+                }
+            ],
+            "bossDrop": "yhwach"
         },
         {
             "id": "thunder_blade",
@@ -870,29 +1031,26 @@
         {
             "id": "void_crystal",
             "name": "Void Kristali",
-            "tier": "legendary",
-            "emoji": "🔮",
-            "type": "material",
             "description": "Mythic silahlar için gerekli. Çok nadir."
         }
     ],
-    "anime_sets": [
+    "basic_sets": [
         {
-            "id": "ninja_set_head",
-            "name": "Ninja Maskesi",
-            "set": "ninja",
-            "tier": "epic",
-            "emoji": "🥷",
+            "id": "beginner_set_head",
+            "name": "Başlangıç Başlığı",
+            "set": "beginner",
+            "tier": "common",
+            "emoji": "🎒",
             "type": "armor",
             "slot": "head",
             "stats": {
-                "speed": 25,
-                "power": 15
+                "defense": 5,
+                "hp": 20
             },
             "setBonus": {
-                "speed": 60,
-                "power": 30,
-                "stealth": 0.2
+                "defense": 15,
+                "hp": 50,
+                "expBonus": 0.1
             }
         },
         {
@@ -1189,6 +1347,136 @@
             "emoji": "🦴",
             "type": "material",
             "description": "AOT item'leri için gerekli. Eren'den düşer."
+        }
+    ],
+    "kurayami_set": [
+        {
+            "id": "kurayami_crown",
+            "name": "Kurayami Tacı",
+            "set": "kurayami",
+            "tier": "mythic",
+            "emoji": "👑",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "power": 60,
+                "defense": 50,
+                "speed": 35,
+                "hp": 150
+            },
+            "setBonus": {
+                "power": 150,
+                "defense": 120,
+                "speed": 100,
+                "hp": 500,
+                "darknessPower": 0.35,
+                "shadowMastery": 0.25,
+                "voidImmunity": 0.2
+            }
+        },
+        {
+            "id": "kurayami_robe",
+            "name": "Kurayami Cüppesi",
+            "set": "kurayami",
+            "tier": "mythic",
+            "emoji": "🌑",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "power": 75,
+                "defense": 65,
+                "speed": 30,
+                "hp": 200
+            },
+            "setBonus": {
+                "power": 150,
+                "defense": 120,
+                "speed": 100,
+                "hp": 500,
+                "voidResistance": 0.4,
+                "energyRegen": 0.3,
+                "damageReflection": 0.15
+            }
+        },
+        {
+            "id": "kurayami_boots",
+            "name": "Kurayami Çizmeleri",
+            "set": "kurayami",
+            "tier": "mythic",
+            "emoji": "🥾",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "power": 45,
+                "defense": 45,
+                "speed": 55,
+                "hp": 120
+            },
+            "setBonus": {
+                "power": 150,
+                "defense": 120,
+                "speed": 100,
+                "hp": 500,
+                "shadowStep": 0.3,
+                "criticalFocus": 0.25,
+                "phaseShift": 0.1
+            }
+        },
+        {
+            "id": "kurayami_blade",
+            "name": "Kurayami Kılıcı",
+            "set": "kurayami",
+            "tier": "mythic",
+            "emoji": "🌌",
+            "type": "weapon",
+            "stats": {
+                "power": 120,
+                "speed": 45,
+                "defense": 40,
+                "hp": 180
+            },
+            "skills": [
+                {
+                    "name": "Darkness Annihilation",
+                    "damage": 400,
+                    "cooldown": 3,
+                    "effect": {
+                        "enemy": {
+                            "stun": 1,
+                            "dot": {
+                                "damage": 100,
+                                "duration": 4
+                            }
+                        }
+                    },
+                    "description": "Karanlık yok edişi"
+                },
+                {
+                    "name": "Void Devastation",
+                    "damage": 500,
+                    "cooldown": 6,
+                    "effect": {
+                        "self": {
+                            "power": 100,
+                            "defense": 50
+                        },
+                        "enemy": {
+                            "blind": 3,
+                            "silence": 2
+                        }
+                    },
+                    "description": "Boşluk yıkımı"
+                }
+            ],
+            "setBonus": {
+                "power": 150,
+                "defense": 120,
+                "speed": 100,
+                "hp": 500,
+                "ultimateMastery": 0.4,
+                "voidControl": 0.3,
+                "omniPower": 0.2
+            }
         }
     ]
 }

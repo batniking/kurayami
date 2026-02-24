@@ -796,7 +796,9 @@
                 ],
                 "diamond": 1000,
                 "raceItem": "shadow_essence",
-                "raceItemChance": 0.10
+                "raceItemChance": 0.10,
+                "weaponDrop": "shadow_monarch_sword",
+                "weaponDropChance": 0.08
             },
             "skills": [
                 {
