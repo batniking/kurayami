@@ -50,9 +50,39 @@
                     "cooldown": 4
                 },
                 {
-                    "name": "Hakuteiken",
-                    "power": 4.2,
-                    "cooldown": 6
+                    "name": "Shukei Hakuteiken",
+                    "power": 5.0,
+                    "cooldown": 8
+                }
+            ]
+        },
+        {
+            "id": "hyorinmaru",
+            "name": "Hyōrinmaru",
+            "shikai": [
+                {
+                    "name": "Ice Dragon",
+                    "power": 1.6,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Freeze",
+                    "power": 1.0,
+                    "cooldown": 3,
+                    "effects": ["frozen"]
+                }
+            ],
+            "bankai": [
+                {
+                    "name": "Ice Field",
+                    "power": 2.8,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Absolute Zero",
+                    "power": 4.5,
+                    "cooldown": 7,
+                    "effects": ["frozen", "dot"]
                 }
             ]
         },
@@ -81,34 +111,6 @@
                     "name": "Zanka no Tachi Nishi",
                     "power": 5.0,
                     "cooldown": 7
-                }
-            ]
-        },
-        {
-            "id": "hyorinmaru",
-            "name": "Hyorinmaru",
-            "shikai": [
-                {
-                    "name": "Buz Ejderhasi",
-                    "power": 1.9,
-                    "cooldown": 2
-                },
-                {
-                    "name": "Sennen Hyoro",
-                    "power": 2.0,
-                    "cooldown": 3
-                }
-            ],
-            "bankai": [
-                {
-                    "name": "Guncho Tsurara",
-                    "power": 3.2,
-                    "cooldown": 4
-                },
-                {
-                    "name": "Ryusenka",
-                    "power": 4.5,
-                    "cooldown": 6
                 }
             ]
         },

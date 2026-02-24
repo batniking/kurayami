@@ -1,5 +1,6 @@
 const Player = require('../models/Player');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const battleSessions = require('../utils/battleSessions');
 
 module.exports = {
     name: 'start',
@@ -34,6 +35,7 @@ module.exports = {
         );
 
         const msg = await message.reply({ embeds: [embed], components: [btn] });
+        battleSessions.register(msg.id, 'start', message.author.id);
 
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === message.author.id });
         collector.on('collect', async (i) => {
@@ -51,6 +53,36 @@ module.exports = {
                 components: []
             });
             collector.stop();
+        });
+        collector.on('end', () => {
+            battleSessions.unregister(msg.id);
+            msg.edit({ components: [] }).catch(() => {});
+        });
+    },
+
+    async handleInteraction(interaction) {
+        if (interaction.customId !== 'start:create') return;
+        
+        const existing = await Player.findOne({ where: { discordId: interaction.user.id } });
+        if (existing) {
+            await interaction.update({
+                embeds: [new EmbedBuilder().setColor(0xe74c3c).setDescription('❌ Zaten bir karakterin var! Profil için `+profile` kullan.')],
+                components: []
+            });
+            return;
+        }
+        
+        await Player.create({
+            discordId: interaction.user.id,
+            username: interaction.user.displayName,
+        });
+        await interaction.update({
+            embeds: [new EmbedBuilder()
+                .setColor(0x2ecc71)
+                .setTitle('✅ Karakter Oluşturuldu!')
+                .setDescription(`**${interaction.user.displayName}** karakterin hazır!\n\nŞimdi \`+raceselect\` ile ırkını seç!`)
+                .setFooter({ text: '⚡ Kurayami RPG' })],
+            components: []
         });
     }
 };

@@ -12,6 +12,18 @@
             "race": null
         },
         {
+            "id": "kunai",
+            "name": "Ninja Kunai",
+            "tier": "common",
+            "emoji": "🥷",
+            "type": "weapon",
+            "stats": {
+                "power": 6,
+                "speed": 3
+            },
+            "race": null
+        },
+        {
             "id": "wooden_blade",
             "name": "Wooden Blade",
             "tier": "common",
@@ -862,6 +874,321 @@
             "emoji": "🔮",
             "type": "material",
             "description": "Mythic silahlar için gerekli. Çok nadir."
+        }
+    ],
+    "anime_sets": [
+        {
+            "id": "ninja_set_head",
+            "name": "Ninja Maskesi",
+            "set": "ninja",
+            "tier": "epic",
+            "emoji": "🥷",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "speed": 25,
+                "power": 15
+            },
+            "setBonus": {
+                "speed": 60,
+                "power": 30,
+                "stealth": 0.2
+            }
+        },
+        {
+            "id": "ninja_set_chest",
+            "name": "Ninja Giysisi",
+            "set": "ninja",
+            "tier": "epic",
+            "emoji": "👘",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "defense": 25,
+                "speed": 20
+            },
+            "setBonus": {
+                "speed": 60,
+                "dodge": 0.15
+            }
+        },
+        {
+            "id": "ninja_set_legs",
+            "name": "Ninja Pantolonu",
+            "set": "ninja",
+            "tier": "epic",
+            "emoji": "🥋",
+            "type": "armor",
+            "slot": "legs",
+            "stats": {
+                "speed": 30,
+                "defense": 20
+            },
+            "setBonus": {
+                "speed": 60,
+                "crit": 0.1
+            }
+        },
+        {
+            "id": "pirate_set_head",
+            "name": "Pirate Şapkası",
+            "set": "pirate",
+            "tier": "rare",
+            "emoji": "🏴‍☠️",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "hp": 50,
+                "power": 20
+            },
+            "setBonus": {
+                "hp": 100,
+                "power": 40,
+                "luck": 0.2
+            }
+        },
+        {
+            "id": "pirate_set_chest",
+            "name": "Pirate Ceketi",
+            "set": "pirate",
+            "tier": "rare",
+            "emoji": "🧥",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "defense": 30,
+                "hp": 40
+            },
+            "setBonus": {
+                "hp": 100,
+                "defense": 20
+            }
+        },
+        {
+            "id": "sorcerer_set_head",
+            "name": "Sorcerer Maskesi",
+            "set": "sorcerer",
+            "tier": "legendary",
+            "emoji": "🎭",
+            "type": "armor",
+            "slot": "head",
+            "stats": {
+                "power": 35,
+                "defense": 25
+            },
+            "setBonus": {
+                "power": 70,
+                "cursedPower": 0.3,
+                "domain": 0.15
+            }
+        },
+        {
+            "id": "sorcerer_set_chest",
+            "name": "Sorcerer Giysisi",
+            "set": "sorcerer",
+            "tier": "legendary",
+            "emoji": "🧙‍♂️",
+            "type": "armor",
+            "slot": "chest",
+            "stats": {
+                "power": 40,
+                "defense": 30,
+                "hp": 60
+            },
+            "setBonus": {
+                "power": 70,
+                "hp": 120,
+                "cursedRegen": 0.1
+            }
+        }
+    ],
+    "anime_special": [
+        {
+            "id": "rasengan",
+            "name": "Rasengan",
+            "tier": "epic",
+            "emoji": "🌀",
+            "type": "weapon",
+            "stats": {
+                "power": 35,
+                "speed": 20
+            },
+            "race": null
+        },
+        {
+            "id": "chidori",
+            "name": "Chidori",
+            "tier": "epic",
+            "emoji": "⚡",
+            "type": "weapon",
+            "stats": {
+                "power": 38,
+                "speed": 25
+            },
+            "race": null
+        },
+        {
+            "id": "kusanagi",
+            "name": "Kusanagi Sword",
+            "tier": "rare",
+            "emoji": "🐍",
+            "type": "weapon",
+            "stats": {
+                "power": 28,
+                "speed": 15
+            },
+            "race": null
+        },
+        {
+            "id": "death_note",
+            "name": "Death Note",
+            "tier": "legendary",
+            "emoji": "📓",
+            "type": "weapon",
+            "stats": {
+                "power": 75,
+                "defense": 30
+            },
+            "race": null
+        },
+        {
+            "id": "gear_5",
+            "name": "Gear 5 Punch",
+            "tier": "mythic",
+            "emoji": "🩸",
+            "type": "weapon",
+            "stats": {
+                "power": 150,
+                "speed": 50,
+                "hp": 200
+            },
+            "race": null
+        },
+        {
+            "id": "katana",
+            "name": "Samurai Katana",
+            "tier": "uncommon",
+            "emoji": "🗡️",
+            "type": "weapon",
+            "stats": {
+                "power": 15,
+                "speed": 8
+            },
+            "race": null
+        },
+        {
+            "id": "cursed_sword",
+            "name": "Cursed Sword",
+            "tier": "rare",
+            "emoji": "🩸",
+            "type": "weapon",
+            "stats": {
+                "power": 32,
+                "hp": -50
+            },
+            "race": null
+        },
+        {
+            "id": "domain_expansion",
+            "name": "Domain Expansion Staff",
+            "tier": "legendary",
+            "emoji": "👁️",
+            "type": "weapon",
+            "stats": {
+                "power": 70,
+                "defense": 40
+            },
+            "race": null
+        },
+        {
+            "id": "nichirin",
+            "name": "Nichirin Blade",
+            "tier": "rare",
+            "emoji": "🔥",
+            "type": "weapon",
+            "stats": {
+                "power": 30,
+                "speed": 12
+            },
+            "race": null
+        },
+        {
+            "id": "eden_zero",
+            "name": "Eden Zero Cannon",
+            "tier": "epic",
+            "emoji": "🌌",
+            "type": "weapon",
+            "stats": {
+                "power": 45,
+                "defense": 20
+            },
+            "race": null
+        }
+    ],
+    "anime_craft_materials": [
+        {
+            "id": "ninja_scroll",
+            "name": "Ninja Scroll",
+            "tier": "rare",
+            "emoji": "📜",
+            "type": "material",
+            "description": "Ninja set'leri için gerekli. Jiraiya'dan düşer."
+        },
+        {
+            "id": "devil_fruit",
+            "name": "Devil Fruit",
+            "tier": "epic",
+            "emoji": "🍎",
+            "type": "material",
+            "description": "Pirate set'leri için gerekli. Kaido'dan düşer."
+        },
+        {
+            "id": "cursed_finger",
+            "name": "Cursed Finger",
+            "tier": "legendary",
+            "emoji": "👆",
+            "type": "material",
+            "description": "Sorcerer set'leri için gerekli. Sukuna'dan düşer."
+        },
+        {
+            "id": "chakra_orb",
+            "name": "Chakra Orb",
+            "tier": "uncommon",
+            "emoji": "🔵",
+            "type": "material",
+            "description": "Ninja skill'leri için gerekli. Naruto NPC'lerinden düşer."
+        },
+        {
+            "id": "haki_essence",
+            "name": "Haki Essence",
+            "tier": "rare",
+            "emoji": "⚫",
+            "type": "material",
+            "description": "Pirate skill'leri için gerekli. Luffy'den düşer."
+        },
+        {
+            "id": "cursed_energy",
+            "name": "Cursed Energy",
+            "tier": "epic",
+            "emoji": "🟣",
+            "type": "material",
+            "description": "Sorcerer skill'leri için gerekli. Gojo'dan düşer."
+        },
+        {
+            "id": "demon_blood",
+            "name": "Demon Blood",
+            "tier": "rare",
+            "emoji": "🩸",
+            "type": "material",
+            "description": "Demon Slayer item'leri için gerekli. Muzan'dan düşer."
+        },
+        {
+            "id": "titan_spine",
+            "name": "Titan Spine",
+            "tier": "epic",
+            "emoji": "🦴",
+            "type": "material",
+            "description": "AOT item'leri için gerekli. Eren'den düşer."
         }
     ]
 }

@@ -1,6 +1,7 @@
 const Player = require('../models/Player');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { errorEmbed, successEmbed, RACE_EMOJIS, getColor } = require('../utils/embedBuilder');
+const battleSessions = require('../utils/battleSessions');
 
 const RACES = [
     { id: 'shinigami', name: 'Shinigami', emoji: '⚫', desc: 'Ruh reaperları. Zanpakuto ve Bankai güçleri.', passive: 'Zanpakuto hasarı +20%' },
@@ -49,6 +50,7 @@ module.exports = {
         }
 
         const msg = await message.reply({ embeds: [embed], components: rows });
+        battleSessions.register(msg.id, 'raceselect', message.author.id);
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === message.author.id });
 
         collector.on('collect', async (i) => {
@@ -80,7 +82,41 @@ module.exports = {
         });
 
         collector.on('end', () => {
+            battleSessions.unregister(msg.id);
             msg.edit({ components: [] }).catch(() => { });
+        });
+    },
+
+    async handleInteraction(interaction) {
+        const [, , raceId] = interaction.customId.split(':');
+        const race = RACES.find(r => r.id === raceId);
+        if (!race) return;
+
+        const player = await Player.findOne({ where: { discordId: interaction.user.id } });
+        if (!player) {
+            await interaction.reply({ embeds: [errorEmbed('Önce `+start` ile karakter oluştur!')], ephemeral: true });
+            return;
+        }
+
+        // İnsan hariç ilk kez seçim serbest, sonrası boss kill gerektirir
+        const isFirstSelect = player.race === 'human' && player.level < 5;
+        if (!isFirstSelect && player.race !== raceId) {
+            return interaction.reply({ embeds: [errorEmbed(`Irk değiştirmek için **${race.name} boss'unu** öldürüp Race Reset Taşı kullanman gerekir!`)], ephemeral: true });
+        }
+
+        player.race = raceId;
+        player.raceEvolution = 0;
+        player.raceForm = null;
+        player.raceData = {};
+        await player.save();
+
+        await interaction.update({
+            embeds: [new EmbedBuilder()
+                .setColor(getColor(raceId))
+                .setTitle(`${race.emoji} ${race.name} Seçildi!`)
+                .setDescription(`**${race.name}** ırkını seçtin!\n**Pasif:** ${race.passive}\n\n` + race.desc)
+                .setFooter({ text: '⚡ Kurayami RPG • Irk Sistemi' })],
+            components: []
         });
     }
 };

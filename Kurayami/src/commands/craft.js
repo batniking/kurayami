@@ -2,6 +2,7 @@ const Player = require('../models/Player');
 const InventoryItem = require('../models/InventoryItem');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { errorEmbed } = require('../utils/embedBuilder');
+const battleSessions = require('../utils/battleSessions');
 
 // Craft tarifleri
 const RECIPES = {
@@ -228,6 +229,7 @@ module.exports = {
             .setFooter({ text: '⚡ Kurayami RPG • 30 saniye içinde onayla!' });
 
         const msg = await message.reply({ embeds: [previewEmbed], components: [confirmRow] });
+        battleSessions.register(msg.id, 'craft', message.author.id);
         const collector = msg.createMessageComponentCollector({ time: 30000, filter: i => i.user.id === message.author.id, max: 1 });
 
         collector.on('collect', async btn => {
@@ -276,7 +278,19 @@ module.exports = {
         });
 
         collector.on('end', async (_, reason) => {
+            battleSessions.unregister(msg.id);
             if (reason === 'time') msg.edit({ components: [] }).catch(() => { });
         });
+    },
+
+    async handleInteraction(interaction) {
+        await interaction.deferUpdate();
+        if (interaction.customId === 'craft:cancel') {
+            await interaction.message.edit({ embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('❌ Crafting iptal edildi.')], components: [] });
+            return;
+        }
+
+        // Craft mantığı buraya gelecek - şimdilik basit bir onay mesajı
+        await interaction.followUp({ embeds: [new EmbedBuilder().setColor(0x2ecc71).setDescription('✅ Craft işlemi başlatıldı!')], ephemeral: true });
     }
 };

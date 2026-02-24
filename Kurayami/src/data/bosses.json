@@ -16,7 +16,9 @@
                 ],
                 "diamond": 1000,
                 "raceItem": "hogyoku",
-                "raceItemChance": 0.15
+                "raceItemChance": 0.15,
+                "animeItem": "cursed_finger",
+                "animeItemChance": 0.05
             },
             "skills": [
                 {
@@ -48,7 +50,9 @@
                 ],
                 "diamond": 1000,
                 "raceItem": "quincy_soul",
-                "raceItemChance": 0.15
+                "raceItemChance": 0.15,
+                "animeItem": "cursed_energy",
+                "animeItemChance": 0.08
             },
             "skills": [
                 {
@@ -988,5 +992,187 @@
         ],
         "maxPartySize": 20,
         "notes": "Haftalık spawn, herkese açık"
-    }
+    },
+    "anime_bosses": [
+        {
+            "id": "jiraiya",
+            "name": "Jiraiya",
+            "tier": "medium",
+            "emoji": "🐸",
+            "hp": 3000,
+            "power": 90,
+            "defense": 60,
+            "speed": 80,
+            "drops": {
+                "gold": [2000, 3000],
+                "diamond": 500,
+                "animeItem": "ninja_scroll",
+                "animeItemChance": 0.20,
+                "animeItem2": "chakra_orb",
+                "animeItem2Chance": 0.30
+            },
+            "skills": [
+                {
+                    "name": "Rasengan",
+                    "damage": 150,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Toad Oil Bomb",
+                    "damage": 100,
+                    "cooldown": 2
+                }
+            ]
+        },
+        {
+            "id": "kaido",
+            "name": "Kaido",
+            "tier": "strong",
+            "emoji": "🐉",
+            "hp": 6000,
+            "power": 140,
+            "defense": 90,
+            "speed": 110,
+            "drops": {
+                "gold": [4000, 6000],
+                "diamond": 800,
+                "animeItem": "devil_fruit",
+                "animeItemChance": 0.15,
+                "animeItem2": "haki_essence",
+                "animeItem2Chance": 0.25
+            },
+            "skills": [
+                {
+                    "name": "Dragon Breath",
+                    "damage": 200,
+                    "cooldown": 3
+                },
+                {
+                    "name": "Hybrid Form",
+                    "damage": 300,
+                    "cooldown": 5
+                }
+            ]
+        },
+        {
+            "id": "sukuna",
+            "name": "Sukuna",
+            "tier": "strong",
+            "emoji": "👹",
+            "hp": 7000,
+            "power": 150,
+            "defense": 95,
+            "speed": 115,
+            "drops": {
+                "gold": [5000, 7000],
+                "diamond": 900,
+                "animeItem": "cursed_finger",
+                "animeItemChance": 0.12,
+                "animeItem2": "cursed_energy",
+                "animeItem2Chance": 0.20
+            },
+            "skills": [
+                {
+                    "name": "Cleave",
+                    "damage": 180,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Malevolent Shrine",
+                    "damage": 350,
+                    "cooldown": 6
+                }
+            ]
+        },
+        {
+            "id": "gojo",
+            "name": "Gojo Satoru",
+            "tier": "strong",
+            "emoji": "👁️",
+            "hp": 6500,
+            "power": 145,
+            "defense": 85,
+            "speed": 130,
+            "drops": {
+                "gold": [4500, 6500],
+                "diamond": 850,
+                "animeItem": "cursed_energy",
+                "animeItemChance": 0.18,
+                "animeItem2": "domain_expansion",
+                "animeItem2Chance": 0.10
+            },
+            "skills": [
+                {
+                    "name": "Hollow Purple",
+                    "damage": 250,
+                    "cooldown": 4
+                },
+                {
+                    "name": "Unlimited Void",
+                    "damage": 200,
+                    "cooldown": 3
+                }
+            ]
+        },
+        {
+            "id": "muzan",
+            "name": "Muzan",
+            "tier": "medium",
+            "emoji": "🦇",
+            "hp": 3500,
+            "power": 100,
+            "defense": 70,
+            "speed": 90,
+            "drops": {
+                "gold": [2500, 3500],
+                "diamond": 600,
+                "animeItem": "demon_blood",
+                "animeItemChance": 0.25,
+                "animeItem2": "nichirin",
+                "animeItem2Chance": 0.20
+            },
+            "skills": [
+                {
+                    "name": "Blood Demon Art",
+                    "damage": 120,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Whirlwind Blades",
+                    "damage": 150,
+                    "cooldown": 3
+                }
+            ]
+        },
+        {
+            "id": "eren",
+            "name": "Eren Yeager",
+            "tier": "medium",
+            "emoji": "🗿",
+            "hp": 4000,
+            "power": 110,
+            "defense": 75,
+            "speed": 85,
+            "drops": {
+                "gold": [3000, 4000],
+                "diamond": 700,
+                "animeItem": "titan_spine",
+                "animeItemChance": 0.15,
+                "animeItem2": "scout_set_head",
+                "animeItem2Chance": 0.10
+            },
+            "skills": [
+                {
+                    "name": "Titan Punch",
+                    "damage": 140,
+                    "cooldown": 2
+                },
+                {
+                    "name": "Founding Titan",
+                    "damage": 200,
+                    "cooldown": 4
+                }
+            ]
+        }
+    ]
 }

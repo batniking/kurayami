@@ -33,6 +33,13 @@ function getPlayerSkills(player) {
         if (evolution >= 2) return q.sternritter;
         return q.vollstandig;
     }
+    
+    // Anime special skill'leri - her ırk kullanabilir
+    if (RACE_SKILLS.anime_special) {
+        const animeSkills = RACE_SKILLS.anime_special[0]?.skills || [];
+        return animeSkills.slice(0, 4); // Max 4 skill göster (duel'de daha çok)
+    }
+    
     return [];
 }
 
@@ -387,5 +394,24 @@ module.exports = {
                 inviteMsg.edit({ components: [], embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('⏰ Davet süresi doldu.')] }).catch(() => { });
             }
         });
+    },
+
+    async handleInteraction(interaction) {
+        // Duel butonları zaten collector ile yönetiliyor, 
+        // ama global sistem için buraya da ekleyelim
+        await interaction.deferUpdate();
+        
+        // Davet kabul/red butonları
+        if (interaction.customId === 'duel:accept' || interaction.customId === 'duel:decline') {
+            // Bu butonlar zaten inviteCollector tarafından handle ediliyor
+            return;
+        }
+        
+        // Skill butonları ve diğer duel butonları
+        const [prefix, action, ...rest] = interaction.customId.split(':');
+        if (prefix === 'duel1' || prefix === 'duel2') {
+            // Bu butonlar zaten duelCollector tarafından handle ediliyor
+            return;
+        }
     }
 };

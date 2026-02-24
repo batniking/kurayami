@@ -2,6 +2,7 @@ const Player = require('../models/Player');
 const InventoryItem = require('../models/InventoryItem');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { errorEmbed, getColor, TIER_EMOJIS } = require('../utils/embedBuilder');
+const battleSessions = require('../utils/battleSessions');
 
 const TABS = [
     { id: 'weapon', label: '⚔️ Silahlar', emoji: '⚔️' },
@@ -67,6 +68,7 @@ module.exports = {
         );
 
         const msg = await message.reply({ embeds: [embed], components: [row] });
+        battleSessions.register(msg.id, 'inv', message.author.id);
 
         const collector = msg.createMessageComponentCollector({
             time: 120000,
@@ -90,7 +92,30 @@ module.exports = {
         });
 
         collector.on('end', () => {
+            battleSessions.unregister(msg.id);
             msg.edit({ components: [] }).catch(() => { });
         });
+    },
+
+    async handleInteraction(interaction) {
+        const [, , tab] = interaction.customId.split(':');
+        const player = await Player.findOne({ where: { discordId: interaction.user.id } });
+        if (!player) {
+            await interaction.reply({ embeds: [errorEmbed('Önce `+start` ile karakter oluştur!')], ephemeral: true });
+            return;
+        }
+
+        const color = getColor(player.race);
+        const newItems = await InventoryItem.findAll({ where: { playerId: player.id, itemType: tab } });
+        const newEmbed = buildInvEmbed(player, newItems, tab, color);
+        const newRow = new ActionRowBuilder().addComponents(
+            TABS.map(t =>
+                new ButtonBuilder()
+                    .setCustomId(`inv:tab:${t.id}:${player.id}`)
+                    .setLabel(t.label)
+                    .setStyle(t.id === tab ? ButtonStyle.Primary : ButtonStyle.Secondary)
+            )
+        );
+        await interaction.update({ embeds: [newEmbed], components: [newRow] });
     }
 };

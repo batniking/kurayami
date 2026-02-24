@@ -70,6 +70,13 @@ function getPlayerSkills(player) {
         if (evolution >= 2) return q.sternritter;
         return q.vollstandig;
     }
+    
+    // Anime special skill'leri - her ırk kullanabilir
+    if (RACE_SKILLS.anime_special) {
+        const animeSkills = RACE_SKILLS.anime_special[0]?.skills || [];
+        return animeSkills.slice(0, 3); // Max 3 skill göster
+    }
+    
     return [];
 }
 
@@ -305,5 +312,16 @@ module.exports = {
                 msg.edit({ components: buildButtons(true) }).catch(() => { });
             }
         });
+    },
+
+    async handleInteraction(interaction) {
+        // Hunt butonları zaten collector ile yönetiliyor
+        await interaction.deferUpdate();
+        
+        const [prefix, action, ...rest] = interaction.customId.split(':');
+        if (prefix === 'hunt') {
+            // Bu butonlar zaten huntCollector tarafından handle ediliyor
+            return;
+        }
     }
 };

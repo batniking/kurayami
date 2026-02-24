@@ -3,6 +3,7 @@ const InventoryItem = require('../models/InventoryItem');
 const { EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { errorEmbed, getColor, TIER_EMOJIS } = require('../utils/embedBuilder');
 const items = require('../data/items.json');
+const battleSessions = require('../utils/battleSessions');
 
 // ─── Sabit Fiyatlar ───
 const SHOP_PRICES = {
@@ -37,6 +38,8 @@ const SHOP_POOLS = {
         ...(Math.random() < 0.10
             ? items.general.filter(i => i.tier === 'legendary').sort(() => Math.random() - 0.5).slice(0, 1)
             : items.general.filter(i => i.tier === 'epic').sort(() => Math.random() - 0.5).slice(0, 1)),
+        // Anime special item'lerden rastgele 1-2 tane
+        ...items.anime_special?.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 2) + 1) || [],
     ],
     armor: [
         ...items.armors.filter(i => ['common', 'uncommon', 'rare'].includes(i.tier)).sort(() => Math.random() - 0.5).slice(0, 4),
@@ -44,12 +47,19 @@ const SHOP_POOLS = {
         ...(Math.random() < 0.10
             ? items.armors.filter(i => i.tier === 'legendary').sort(() => Math.random() - 0.5).slice(0, 1)
             : items.armors.filter(i => i.tier === 'epic').sort(() => Math.random() - 0.5).slice(0, 1)),
+        // Anime set'lerden rastgele 1-2 tane
+        ...items.anime_sets?.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 2) + 1) || [],
     ],
     accessory: [
         ...items.accessories.sort(() => Math.random() - 0.5).slice(0, 5),
     ],
     pot: [
         ...items.pots,
+    ],
+    material: [
+        ...items.craft_materials?.sort(() => Math.random() - 0.5).slice(0, 6) || [],
+        // Anime craft malzemelerinden rastgele 2-3 tane
+        ...items.anime_craft_materials?.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 2) + 2) || [],
     ],
 };
 
@@ -97,14 +107,29 @@ module.exports = {
             new ButtonBuilder().setCustomId('shop:armor').setLabel('🛡️ Zırhlar').setStyle(ButtonStyle.Primary),
             new ButtonBuilder().setCustomId('shop:accessory').setLabel('💍 Aksesuar').setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId('shop:pot').setLabel('🧪 Potlar').setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId('shop:material').setLabel('📦 Malzemeler').setStyle(ButtonStyle.Secondary),
         );
 
         const msg = await message.reply({ embeds: [buildShopEmbed(player, cat)], components: [catRow] });
+        battleSessions.register(msg.id, 'shop', message.author.id);
         const collector = msg.createMessageComponentCollector({ time: 120000, filter: i => i.user.id === message.author.id });
         collector.on('collect', async i => {
             cat = i.customId.split(':')[1];
             await i.update({ embeds: [buildShopEmbed(player, cat)], components: [catRow] });
         });
-        collector.on('end', () => msg.edit({ components: [] }).catch(() => { }));
+        collector.on('end', () => {
+            battleSessions.unregister(msg.id);
+            msg.edit({ components: [] }).catch(() => { });
+        });
+    },
+
+    async handleInteraction(interaction) {
+        const cat = interaction.customId.split(':')[1];
+        const player = await Player.findOne({ where: { discordId: interaction.user.id } });
+        if (!player) {
+            await interaction.reply({ content: '❌ Oyuncu bulunamadı!', ephemeral: true });
+            return;
+        }
+        await interaction.update({ embeds: [buildShopEmbed(player, cat)], components: [interaction.message.components[0]] });
     }
 };
