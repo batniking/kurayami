@@ -13,6 +13,12 @@ const ALL_ITEMS = [
     ...(items.craft_materials || []),
     ...(items.bleach_weapons || []),
     ...(items.race_items || []),
+    ...(items.kurayami_set || []),
+    ...(items.anime_sets || []),
+    ...(items.anime_special || []),
+    ...(items.basic_sets || []),
+    ...(items.god_sets || []),
+    ...(items.hollow_weapons || []),
 ];
 
 // ⚠️ Admin Discord ID'leri buraya ekle
