@@ -53,31 +53,37 @@ function getPlayerSkills(player) {
     const evolution = player.raceEvolution || 0;
     if (!race || evolution === 0) return [];
 
+    // Önce race-specific skill'leri al
+    let skills = [];
+    
     if (race === 'shinigami') {
         const id = player.raceData?.zanpakuto || 'default_shinigami';
         const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
-        return z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
+        skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
     }
     if (race === 'hollow') {
         const id = player.raceData?.espada || 'default_hollow';
         const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
-        return e?.skills || [];
+        skills = e?.skills || [];
     }
     if (race === 'quincy') {
         const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
-        if (!q) return [];
-        if (evolution >= 3) return q.yhwach;
-        if (evolution >= 2) return q.sternritter;
-        return q.vollstandig;
+        if (!q) skills = [];
+        else if (evolution >= 3) skills = q.yhwach;
+        else if (evolution >= 2) skills = q.sternritter;
+        else skills = q.vollstandig;
     }
     
     // Anime special skill'leri - her ırk kullanabilir
-    if (RACE_SKILLS.anime_special) {
+    if (RACE_SKILLS.anime_special && RACE_SKILLS.anime_special.length > 0) {
         const animeSkills = RACE_SKILLS.anime_special[0]?.skills || [];
-        return animeSkills.slice(0, 3); // Max 3 skill göster
+        // Race skill'leri varsa onları kullan, yoksa anime skill'leri kullan
+        if (skills.length === 0) {
+            skills = animeSkills.slice(0, 3); // Max 3 skill göster
+        }
     }
     
-    return [];
+    return skills;
 }
 
 function formatSkills(skills, cooldowns) {
@@ -183,7 +189,7 @@ module.exports = {
 
                 // DOT işleme (saldırıdan önce)
                 const dotLogs = processDotsAndStatuses(fighter);
-                if (dotLogs.length) actionLog += dotLogs.join('\n') + '\n';
+                if (dotLogs && dotLogs.length) actionLog += dotLogs.join('\n') + '\n';
 
                 // Oyuncu saldırı
                 const playerDmg = calcDamage(fighter, enemy, usedSkill);
@@ -194,7 +200,7 @@ module.exports = {
                 if (usedSkill) {
                     actionLog += `⚔️ **${player.username}**\n> ⚡ **${usedSkill.name}** kullandı → **${playerDmg}** hasar!\n`;
                     const effectLogs = applyEffects(usedSkill, fighter, enemy);
-                    if (effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
+                    if (effectLogs && effectLogs.length) actionLog += effectLogs.join('\n') + '\n';
                 } else {
                     actionLog += `⚔️ **${player.username}** → **${playerDmg}** hasar!\n`;
                 }
@@ -255,7 +261,7 @@ module.exports = {
 
                 // Düşman DOT işleme
                 const enemyDotLogs = processDotsAndStatuses(enemy);
-                if (enemyDotLogs.length) actionLog += enemyDotLogs.join(' ') + '\n';
+                if (enemyDotLogs && enemyDotLogs.length) actionLog += enemyDotLogs.join(' ') + '\n';
 
                 // Düşman saldırı
                 if (!isSkipping(enemy)) {
@@ -307,8 +313,15 @@ module.exports = {
         collector.on('end', async (_, reason) => {
             battleSessions.unregister(msg.id);
             if (!['win', 'lose', 'fled'].includes(reason)) {
-                player.inBattle = false;
-                await player.save();
+                try {
+                    const currentPlayer = await Player.findOne({ where: { discordId: message.author.id } });
+                    if (currentPlayer) {
+                        currentPlayer.inBattle = false;
+                        await currentPlayer.save();
+                    }
+                } catch (err) {
+                    console.error('Error clearing battle state:', err);
+                }
                 msg.edit({ components: buildButtons(true) }).catch(() => { });
             }
         });
