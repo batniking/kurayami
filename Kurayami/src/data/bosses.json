@@ -57,11 +57,13 @@
             "skills": [
                 {
                     "name": "Almighty",
+                    "power": 250,
                     "damage": 250,
                     "cooldown": 3
                 },
                 {
                     "name": "Soul Drain",
+                    "power": 250,
                     "damage": 150,
                     "cooldown": 2,
                     "effect": {
@@ -92,6 +94,7 @@
             "skills": [
                 {
                     "name": "Lure Attack",
+                    "power": 60,
                     "damage": 60,
                     "cooldown": 3
                 }
@@ -117,6 +120,7 @@
             "skills": [
                 {
                     "name": "Cero",
+                    "power": 80,
                     "damage": 80,
                     "cooldown": 3
                 }
@@ -144,6 +148,7 @@
             "skills": [
                 {
                     "name": "Gran Cero",
+                    "power": 120,
                     "damage": 120,
                     "cooldown": 3
                 }
