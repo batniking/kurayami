@@ -60,13 +60,11 @@ function getPlayerSkills(player) {
         const id = player.raceData?.zanpakuto || 'default_shinigami';
         const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
         skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
-    }
-    if (race === 'hollow') {
+    } else if (race === 'hollow') {
         const id = player.raceData?.espada || 'default_hollow';
         const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
         skills = e?.skills || [];
-    }
-    if (race === 'quincy') {
+    } else if (race === 'quincy') {
         const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
         if (!q) skills = [];
         else if (evolution >= 3) skills = q.yhwach;

@@ -43,13 +43,11 @@ function getPlayerSkills(player) {
         const id = player.raceData?.zanpakuto || 'default_shinigami';
         const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
         skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
-    }
-    if (race === 'hollow') {
+    } else if (race === 'hollow') {
         const id = player.raceData?.espada || 'default_hollow';
         const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
         skills = e?.skills || [];
-    }
-    if (race === 'quincy') {
+    } else if (race === 'quincy') {
         const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
         if (!q) skills = [];
         else if (evolution >= 3) skills = q.yhwach;
@@ -120,8 +118,16 @@ module.exports = {
 
         const boss = {
             ...bossTemplate,
-            hp: bossTemplate.hp,
-            maxHp: bossTemplate.hp,
+            hp: bossTemplate.hp || 1000,
+            maxHp: bossTemplate.hp || 1000,
+            power: bossTemplate.power || 50,
+            defense: bossTemplate.defense || 30,
+            speed: bossTemplate.speed || 40,
+            tier: bossTemplate.tier || 'medium',
+            emoji: bossTemplate.emoji || '👹',
+            name: bossTemplate.name || 'Bilinmeyen Boss',
+            skills: bossTemplate.skills || [],
+            drops: bossTemplate.drops || {},
             tempBuffs: {}, burn: null, dot: null, frozen: 0, stunned: 0, skipTurns: 0, noHeal: 0,
             skillCooldowns: {},
         };
@@ -130,8 +136,8 @@ module.exports = {
         const skillCooldowns = skills.map(() => 0); // skill cooldown sayaçları
         const fighter = buildFighterState(player, player.username);
         let turn = 1;
-        let battleLog = `⚠️ **${boss.emoji} ${boss.name}** ortaya çıktı! Savaş başlıyor...`;
-        const color = getColor(player.race);
+        let battleLog = `⚠️ **${boss.emoji || '👹'} ${boss.name || 'Bilinmeyen Boss'}** ortaya çıktı! Savaş başlıyor...`;
+        const color = getColor(player.race || 'human');
 
         const tierLabel = { weak: '🟢 Zayıf', medium: '🟡 Orta', strong: '🔴 Güçlü' }[boss.tier] || '❓';
 
@@ -161,17 +167,17 @@ module.exports = {
             
             const embed = new EmbedBuilder()
                 .setColor(0xe74c3c)
-                .setTitle(`${boss.emoji} ${boss.name} Boss Savaşı`)
+                .setTitle(`${boss.emoji || '👹'} ${boss.name || 'Bilinmeyen Boss'} Boss Savaşı`)
                 .setDescription(`**${tierLabel}** • **Tur ${turn}**\n\n${log}`)
-                .setThumbnail(boss.emoji)
+                .setThumbnail(boss.emoji || '👹')
                 .addFields(
                     { 
-                        name: `⚔️ ${player.username}`, 
+                        name: `⚔️ ${player.username || 'Player'}`, 
                         value: `❤️ ${fighter.hp}/${fighter.maxHp} (${playerHpPercent}%)\n⚡ ${fighter.power} • 🛡️ ${fighter.defense} • 💨 ${fighter.speed}`, 
                         inline: true 
                     },
                     { 
-                        name: `💀 ${boss.name}`, 
+                        name: `💀 ${boss.name || 'Bilinmeyen Boss'}`, 
                         value: `❤️ ${Math.max(0, boss.hp)}/${boss.maxHp} (${bossHpPercent}%)\n⚡ ${boss.power} • 🛡️ ${boss.defense} • 💨 ${boss.speed}`, 
                         inline: true 
                     }
@@ -253,12 +259,12 @@ module.exports = {
                     if (player.winStreak > player.bestWinStreak) player.bestWinStreak = player.winStreak;
 
                     // Drop hesapla
-                    const drops = boss.drops;
+                    const drops = boss.drops || {};
                     const goldGained = drops.gold
                         ? Math.floor(Math.random() * (drops.gold[1] - drops.gold[0]) + drops.gold[0])
                         : 0;
                     const diamondGained = drops.diamond || 0;
-                    const expGained = Math.floor(boss.hp / 10) + 200;
+                    const expGained = Math.floor(boss.maxHp / 10) + 200;
 
                     player.gold += goldGained;
                     player.diamond += diamondGained;
@@ -341,12 +347,12 @@ module.exports = {
                 if (!isSkipping(boss)) {
                     // Boss skill mi, normal saldırı mı?
                     let bossUsedSkill = null;
-                    if (boss.skills?.length) {
+                    if (boss.skills && Array.isArray(boss.skills) && boss.skills.length > 0) {
                         for (const sk of boss.skills) {
                             const cd = boss.skillCooldowns[sk.name] || 0;
                             if (cd <= 0) {
                                 bossUsedSkill = sk;
-                                boss.skillCooldowns[sk.name] = sk.cooldown;
+                                boss.skillCooldowns[sk.name] = sk.cooldown || 3;
                                 break;
                             }
                         }
@@ -354,21 +360,25 @@ module.exports = {
                         for (const key in boss.skillCooldowns) {
                             if (boss.skillCooldowns[key] > 0) boss.skillCooldowns[key]--;
                         }
+                    } else {
+                        // Boss skill'i yoksa normal saldırı
+                        bossUsedSkill = null;
                     }
 
                     let bossDmg;
                     if (bossUsedSkill) {
-                        bossDmg = Math.max(1, bossUsedSkill.damage - Math.floor(fighter.defense / 2));
-                        actionLog += `💀 **${boss.name}** → **${bossUsedSkill.name}** ile **${bossDmg}** hasar verdi!\n`;
+                        const skillDamage = bossUsedSkill.damage || bossUsedSkill.power || boss.power || 50;
+                        bossDmg = Math.max(1, Math.floor(skillDamage - fighter.defense / 2));
+                        actionLog += `💀 **${boss.name || 'Boss'}** → **${bossUsedSkill.name}** ile **${bossDmg}** hasar verdi!\n`;
                         // Boss skill efekti (self heal)
                         if (bossUsedSkill.effect?.self?.healPercent) {
                             const heal = Math.floor(boss.maxHp * bossUsedSkill.effect.self.healPercent);
                             boss.hp = Math.min(boss.maxHp, boss.hp + heal);
-                            actionLog += `💚 **${boss.name}** ${heal} HP iyileşti!\n`;
+                            actionLog += `💚 **${boss.name || 'Boss'}** ${heal} HP iyileşti!\n`;
                         }
                     } else {
-                        bossDmg = Math.max(1, Math.floor(boss.power * 1.5 - fighter.defense / 2 + Math.random() * 15));
-                        actionLog += `🔴 **${boss.name}** → **${bossDmg}** hasar verdi!`;
+                        bossDmg = Math.max(1, Math.floor((boss.power || 50) * 1.5 - fighter.defense / 2 + Math.random() * 15));
+                        actionLog += `🔴 **${boss.name || 'Boss'}** → **${bossDmg}** hasar verdi!`;
                     }
 
                     fighter.hp -= bossDmg;

@@ -95,12 +95,12 @@ function isSkipping(entity) {
 
 function buildFighterState(player, name) {
     return {
-        name: name || player.username,
-        hp: player.hp,
-        maxHp: player.maxHp,
-        power: player.power,
-        defense: player.defense,
-        speed: player.speed,
+        name: name || player.username || 'Unknown',
+        hp: player.hp || 100,
+        maxHp: player.maxHp || 100,
+        power: player.power || 10,
+        defense: player.defense || 5,
+        speed: player.speed || 10,
         burn: null, dot: null, dotPercent: null, frozen: 0, stunned: 0, skipTurns: 0,
         noHeal: 0, tempBuffs: {}, hasRevive: false,
     };
