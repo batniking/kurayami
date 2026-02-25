@@ -66,8 +66,14 @@ client.on('warn', (info) => console.warn('⚠️ Discord uyarı:', info));
         console.log('✅ PostgreSQL bağlantısı başarılı!');
 
         console.log('🔄 Veritabanı modelleri senkronize ediliyor...');
-        await sequelize.sync(); // alter:true kaldırıldı — free DB'de zaman aşımına neden oluyordu
-        console.log('✅ Veritabanı modelleri senkronize edildi!');
+        try {
+            await sequelize.sync({ alter: true });
+            console.log('✅ Veritabanı modelleri senkronize edildi (alter)!');
+        } catch (syncErr) {
+            console.warn('⚠️ alter:true başarısız, düz sync deneniyor:', syncErr.message);
+            await sequelize.sync();
+            console.log('✅ Veritabanı modelleri senkronize edildi (basic)!');
+        }
 
         if (!process.env.DISCORD_TOKEN) {
             throw new Error('DISCORD_TOKEN env değişkeni tanımlanmamış!');
