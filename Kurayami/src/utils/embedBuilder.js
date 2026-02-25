@@ -73,8 +73,8 @@ function profileEmbed(player, user) {
             { name: '💨 Hız', value: `${player.speed}`, inline: true },
             { name: '💰 Altın', value: `${player.gold.toLocaleString()}`, inline: true },
             { name: '💎 Elmas', value: `${player.diamond}`, inline: true },
-            { name: '🪙 Hollow Coin', value: `${player.hollowCoin}`, inline: true },
-            { name: '📈 İstatistikler', value: `Kills: **${player.totalKills}** | Boss: **${player.totalBossKills}** | PvP W/L: **${player.pvpWins}/${player.pvpLosses}**`, inline: false },
+            { name: '🪙 Hollow Coin', value: `${player.hollowCoin || 0}`, inline: true },
+            { name: '📈 İstatistikler', value: `Kills: **${player.totalKills}** | Boss: **${player.bossKills}** | PvP W/L: **${player.pvpWins}/${player.pvpLosses}**`, inline: false },
         )
         .setFooter({ text: `⚡ Kurayami RPG • v1.0 ${player.title ? `| 🎖️ ${player.title}` : ''}` })
         .setTimestamp();

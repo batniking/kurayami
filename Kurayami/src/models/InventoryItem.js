@@ -8,6 +8,8 @@ const InventoryItem = sequelize.define('InventoryItem', {
     tier: { type: DataTypes.STRING, defaultValue: 'common' },
     quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
     equipped: { type: DataTypes.BOOLEAN, defaultValue: false },
+    slot: { type: DataTypes.STRING, defaultValue: null },
+    upgradeLevel: { type: DataTypes.INTEGER, defaultValue: 0 },
     data: { type: DataTypes.JSONB, defaultValue: {} },
 });
 

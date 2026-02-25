@@ -37,6 +37,13 @@ const Player = sequelize.define('Player', {
     lastPassiveIncome: { type: DataTypes.DATE, defaultValue: null },
     title: { type: DataTypes.STRING, defaultValue: null },
     banner: { type: DataTypes.STRING, defaultValue: null },
+    expNeeded: { type: DataTypes.INTEGER, defaultValue: 100 },
+    statPoints: { type: DataTypes.INTEGER, defaultValue: 0 },
+    seasonPassXp: { type: DataTypes.INTEGER, defaultValue: 0 },
+    seasonPassTier: { type: DataTypes.INTEGER, defaultValue: 0 },
+    rankedTier: { type: DataTypes.STRING, defaultValue: 'unranked' },
+    passiveIncomeLast: { type: DataTypes.DATE, defaultValue: null },
+    friends: { type: DataTypes.JSONB, defaultValue: [] },
 });
 
 module.exports = Player;

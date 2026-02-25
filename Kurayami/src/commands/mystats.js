@@ -22,7 +22,7 @@ module.exports = {
             .setTitle('📊 Detaylı İstatistikler')
             .addFields(
                 { name: '💀 NPC Kill', value: `${player.totalKills}`, inline: true },
-                { name: '👹 Boss Kill', value: `${player.totalBossKills}`, inline: true },
+                { name: '👹 Boss Kill', value: `${player.bossKills}`, inline: true },
                 { name: '💥 Toplam Hasar', value: `${Number(player.totalDamageDealt).toLocaleString()}`, inline: true },
                 { name: '⚔️ PvP Kazanım', value: `${player.pvpWins}`, inline: true },
                 { name: '❌ PvP Kayıp', value: `${player.pvpLosses}`, inline: true },
