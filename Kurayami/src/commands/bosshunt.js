@@ -34,36 +34,43 @@ function pickBoss(playerLevel, bossId) {
 function getPlayerSkills(player) {
     const race = player.race;
     const evolution = player.raceEvolution || 0;
-    if (!race || evolution === 0) return [];
-
-    // Önce race-specific skill'leri al
     let skills = [];
-    
-    if (race === 'shinigami') {
-        const id = player.raceData?.zanpakuto || 'default_shinigami';
-        const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
-        skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
-    } else if (race === 'hollow') {
-        const id = player.raceData?.espada || 'default_hollow';
-        const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
-        skills = e?.skills || [];
-    } else if (race === 'quincy') {
-        const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
-        if (!q) skills = [];
-        else if (evolution >= 3) skills = q.yhwach;
-        else if (evolution >= 2) skills = q.sternritter;
-        else skills = q.vollstandig;
-    }
-    
-    // Anime special skill'leri - her ırk kullanabilir
-    if (RACE_SKILLS.anime_special && RACE_SKILLS.anime_special.length > 0) {
-        const animeSkills = RACE_SKILLS.anime_special[0]?.skills || [];
-        // Race skill'leri varsa onları kullan, yoksa anime skill'leri kullan
-        if (skills.length === 0) {
-            skills = animeSkills.slice(0, 3); // Max 3 skill göster
+
+    // 1. Race skill'leri (evolution >= 1 gerekli)
+    if (race && evolution >= 1) {
+        if (race === 'shinigami') {
+            const id = player.raceData?.zanpakuto || 'default_shinigami';
+            const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
+            skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
+        } else if (race === 'hollow') {
+            const id = player.raceData?.espada || 'default_hollow';
+            const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
+            skills = e?.skills || [];
+        } else if (race === 'quincy') {
+            const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
+            if (!q) skills = [];
+            else if (evolution >= 3) skills = q.yhwach;
+            else if (evolution >= 2) skills = q.sternritter;
+            else skills = q.vollstandig;
+        }
+
+        // Anime special fallback — race skill yoksa
+        if (skills.length === 0 && RACE_SKILLS.anime_special?.length > 0) {
+            skills = (RACE_SKILLS.anime_special[0]?.skills || []).slice(0, 3);
         }
     }
-    
+
+    // 2. Silah skill'leri — equipped weapon'da skill varsa ekle
+    const weapon = player.equippedWeapon;
+    if (weapon?.skills && Array.isArray(weapon.skills)) {
+        for (const ws of weapon.skills) {
+            if (skills.length >= 4) break;
+            if (!skills.find(s => s.name === ws.name)) {
+                skills.push(ws);
+            }
+        }
+    }
+
     return skills;
 }
 
@@ -90,7 +97,7 @@ module.exports = {
                 if (session.userId === message.author.id && ['bosshunt', 'hunt'].includes(session.type)) {
                     console.log(`Clearing stuck battle session for user ${message.author.id}`);
                     battleSessions.unregister(messageId);
-                    
+
                     // Player'ın inBattle durumunu da düzelt
                     const player = await Player.findOne({ where: { discordId: message.author.id } });
                     if (player) {
@@ -164,36 +171,35 @@ module.exports = {
         const makeBossEmbed = (log) => {
             const playerHpPercent = Math.floor((fighter.hp / fighter.maxHp) * 100);
             const bossHpPercent = Math.floor((boss.hp / boss.maxHp) * 100);
-            
+
             const embed = new EmbedBuilder()
                 .setColor(0xe74c3c)
                 .setTitle(`${boss.emoji || '👹'} ${boss.name || 'Bilinmeyen Boss'} Boss Savaşı`)
                 .setDescription(`**${tierLabel}** • **Tur ${turn}**\n\n${log}`)
-                .setThumbnail(boss.emoji || '👹')
                 .addFields(
-                    { 
-                        name: `⚔️ ${player.username || 'Player'}`, 
-                        value: `❤️ ${fighter.hp}/${fighter.maxHp} (${playerHpPercent}%)\n⚡ ${fighter.power} • 🛡️ ${fighter.defense} • 💨 ${fighter.speed}`, 
-                        inline: true 
+                    {
+                        name: `⚔️ ${player.username || 'Player'}`,
+                        value: `❤️ ${fighter.hp}/${fighter.maxHp} (${playerHpPercent}%)\n⚡ ${fighter.power} • 🛡️ ${fighter.defense} • 💨 ${fighter.speed}`,
+                        inline: true
                     },
-                    { 
-                        name: `💀 ${boss.name || 'Bilinmeyen Boss'}`, 
-                        value: `❤️ ${Math.max(0, boss.hp)}/${boss.maxHp} (${bossHpPercent}%)\n⚡ ${boss.power} • 🛡️ ${boss.defense} • 💨 ${boss.speed}`, 
-                        inline: true 
+                    {
+                        name: `💀 ${boss.name || 'Bilinmeyen Boss'}`,
+                        value: `❤️ ${Math.max(0, boss.hp)}/${boss.maxHp} (${bossHpPercent}%)\n⚡ ${boss.power} • 🛡️ ${boss.defense} • 💨 ${boss.speed}`,
+                        inline: true
                     }
                 )
                 .setFooter({ text: '⚡ Kurayami RPG • Boss Hunt' })
                 .setTimestamp();
-            
+
             const skillsText = formatSkills(skills, skillCooldowns);
             if (skillsText) {
-                embed.addFields({ 
-                    name: '⚡ Yetenekler', 
-                    value: skillsText, 
-                    inline: false 
+                embed.addFields({
+                    name: '⚡ Yetenekler',
+                    value: skillsText,
+                    inline: false
                 });
             }
-            
+
             return embed;
         };
 
@@ -317,7 +323,6 @@ module.exports = {
                     const wonEmbed = new EmbedBuilder()
                         .setColor(0xf1c40f)
                         .setTitle('🏆 Zafer!')
-                        .setThumbnail(boss.emoji)
                         .setDescription(`${boss.emoji} **${boss.name}** bertaraf edildi!`)
                         .addFields(
                             {
@@ -401,7 +406,6 @@ module.exports = {
                         const lostEmbed = new EmbedBuilder()
                             .setColor(0xe74c3c)
                             .setTitle('💀 Mağlubiyet')
-                            .setThumbnail(boss.emoji)
                             .setDescription(`${boss.emoji} **${boss.name}** seni yendi!`)
                             .addFields(
                                 {
@@ -464,7 +468,7 @@ module.exports = {
     async handleInteraction(interaction) {
         // Boss hunt butonları zaten collector ile yönetiliyor
         await interaction.deferUpdate();
-        
+
         const [prefix, action, ...rest] = interaction.customId.split(':');
         if (prefix === 'bh') {
             // Bu butonlar zaten bossCollector tarafından handle ediliyor

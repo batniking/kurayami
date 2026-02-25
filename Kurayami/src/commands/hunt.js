@@ -51,36 +51,44 @@ function pickNpc(playerLevel) {
 function getPlayerSkills(player) {
     const race = player.race;
     const evolution = player.raceEvolution || 0;
-    if (!race || evolution === 0) return [];
-
-    // Önce race-specific skill'leri al
     let skills = [];
-    
-    if (race === 'shinigami') {
-        const id = player.raceData?.zanpakuto || 'default_shinigami';
-        const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
-        skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
-    } else if (race === 'hollow') {
-        const id = player.raceData?.espada || 'default_hollow';
-        const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
-        skills = e?.skills || [];
-    } else if (race === 'quincy') {
-        const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
-        if (!q) skills = [];
-        else if (evolution >= 3) skills = q.yhwach;
-        else if (evolution >= 2) skills = q.sternritter;
-        else skills = q.vollstandig;
-    }
-    
-    // Anime special skill'leri - her ırk kullanabilir
-    if (RACE_SKILLS.anime_special && RACE_SKILLS.anime_special.length > 0) {
-        const animeSkills = RACE_SKILLS.anime_special[0]?.skills || [];
-        // Race skill'leri varsa onları kullan, yoksa anime skill'leri kullan
-        if (skills.length === 0) {
-            skills = animeSkills.slice(0, 3); // Max 3 skill göster
+
+    // 1. Race skill'leri (evolution >= 1 gerekli)
+    if (race && evolution >= 1) {
+        if (race === 'shinigami') {
+            const id = player.raceData?.zanpakuto || 'default_shinigami';
+            const z = RACE_SKILLS.shinigami.find(z => z.id === id) || RACE_SKILLS.shinigami.find(z => z.id === 'default_shinigami');
+            skills = z ? (evolution >= 2 ? z.bankai : z.shikai) : [];
+        } else if (race === 'hollow') {
+            const id = player.raceData?.espada || 'default_hollow';
+            const e = RACE_SKILLS.hollow.find(e => e.id === id) || RACE_SKILLS.hollow.find(e => e.id === 'default_hollow');
+            skills = e?.skills || [];
+        } else if (race === 'quincy') {
+            const q = RACE_SKILLS.quincy.find(q => q.id === 'default_quincy');
+            if (!q) skills = [];
+            else if (evolution >= 3) skills = q.yhwach;
+            else if (evolution >= 2) skills = q.sternritter;
+            else skills = q.vollstandig;
+        }
+
+        // Anime special fallback — race skill yoksa
+        if (skills.length === 0 && RACE_SKILLS.anime_special?.length > 0) {
+            skills = (RACE_SKILLS.anime_special[0]?.skills || []).slice(0, 3);
         }
     }
-    
+
+    // 2. Silah skill'leri — equipped weapon'da skill varsa ekle
+    const weapon = player.equippedWeapon;
+    if (weapon?.skills && Array.isArray(weapon.skills)) {
+        for (const ws of weapon.skills) {
+            if (skills.length >= 4) break; // max 4 skill butonu
+            // Aynı isimde skill ekleme
+            if (!skills.find(s => s.name === ws.name)) {
+                skills.push(ws);
+            }
+        }
+    }
+
     return skills;
 }
 
@@ -107,7 +115,7 @@ module.exports = {
                 if (session.userId === message.author.id && ['bosshunt', 'hunt'].includes(session.type)) {
                     console.log(`Clearing stuck battle session for user ${message.author.id}`);
                     battleSessions.unregister(messageId);
-                    
+
                     // Player'ın inBattle durumunu da düzelt
                     const player = await Player.findOne({ where: { discordId: message.author.id } });
                     if (player) {
@@ -235,8 +243,6 @@ module.exports = {
                     // Drop
                     const drops = rollNpcDrop(npc.tier);
                     for (const drop of drops) {
-                        if (drop.type === 'gold') player.gold += drop.amount;
-                        if (drop.type === 'diamond') player.diamond += drop.amount;
                         if (drop.type === 'item') {
                             await InventoryItem.create({
                                 playerId: player.id,
@@ -254,6 +260,7 @@ module.exports = {
                     const itemDrop = drops.find(d => d.type === 'item');
 
                     player.gold += goldDrop;
+                    player.diamond += diamondDrop;
 
                     const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
                     const hpBar = '🟩'.repeat(Math.round(pct / 10)) + '⬛'.repeat(10 - Math.round(pct / 10));
@@ -348,7 +355,7 @@ module.exports = {
     async handleInteraction(interaction) {
         // Hunt butonları zaten collector ile yönetiliyor
         await interaction.deferUpdate();
-        
+
         const [prefix, action, ...rest] = interaction.customId.split(':');
         if (prefix === 'hunt') {
             // Bu butonlar zaten huntCollector tarafından handle ediliyor
