@@ -27,7 +27,7 @@ module.exports = {
                             ephemeral: true,
                         });
                     }
-                } catch (_) { /* already replied/deferred */ }
+                } catch (_) { }
                 return;
             }
             if (!battleSessions.isOwner(session, interaction.user.id)) {
@@ -40,18 +40,7 @@ module.exports = {
             }
         }
 
-        // Mevcut handleInteraction (komut kendi butonunu yönetiyorsa)
-        const [commandName] = customId.split(':');
-        const command = client.commands.get(commandName);
-        if (command?.handleInteraction) {
-            try {
-                await command.handleInteraction(interaction, client);
-            } catch (err) {
-                console.error(`Interaction hatası [${commandName}]:`, err);
-                if (!interaction.replied && !interaction.deferred) {
-                    await interaction.reply({ content: '❌ Bir hata oluştu!', ephemeral: true }).catch(() => { });
-                }
-            }
-        }
+        // Buton mantığı her komutun kendi collector'ı tarafından yönetiliyor.
+        // handleInteraction ÇAĞRILMAZ — yoksa collector ile çakışır ve çift işleme olur.
     }
 };

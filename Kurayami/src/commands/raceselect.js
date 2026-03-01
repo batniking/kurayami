@@ -54,31 +54,35 @@ module.exports = {
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === message.author.id });
 
         collector.on('collect', async (i) => {
-            const [, , raceId] = i.customId.split(':');
-            const race = RACES.find(r => r.id === raceId);
-            if (!race) return;
+            try {
+                const [, , raceId] = i.customId.split(':');
+                const race = RACES.find(r => r.id === raceId);
+                if (!race) return;
 
-            // İnsan hariç ilk kez seçim serbest, sonrası boss kill gerektirir
-            const isFirstSelect = player.race === 'human' && player.level < 5;
-            if (!isFirstSelect && player.race !== raceId) {
-                return i.reply({ embeds: [errorEmbed(`Irk değiştirmek için **${race.name} boss\'unu** öldürüp Race Reset Taşı kullanman gerekir!`)], ephemeral: true });
+                // İnsan hariç ilk kez seçim serbest, sonrası boss kill gerektirir
+                const isFirstSelect = player.race === 'human' && player.level < 5;
+                if (!isFirstSelect && player.race !== raceId) {
+                    return i.reply({ embeds: [errorEmbed(`Irk değiştirmek için **${race.name} boss'unu** öldürüp Race Reset Taşı kullanman gerekir!`)], ephemeral: true });
+                }
+
+                player.race = raceId;
+                player.raceEvolution = 0;
+                player.raceData = {};
+                await player.save();
+
+                await i.update({
+                    embeds: [new EmbedBuilder()
+                        .setColor(getColor(raceId))
+                        .setTitle(`${race.emoji} ${race.name} Seçildi!`)
+                        .setDescription(`**${race.name}** ırkını seçtin!\n**Pasif:** ${race.passive}\n\n` + race.desc)
+                        .setFooter({ text: '⚡ Kurayami RPG • Irk Sistemi' })],
+                    components: []
+                });
+                collector.stop();
+            } catch (err) {
+                console.error('Raceselect hatası:', err);
+                await i.reply({ content: '❌ Irk seçilirken hata oluştu!', ephemeral: true }).catch(() => { });
             }
-
-            player.race = raceId;
-            player.raceEvolution = 0;
-            player.raceForm = null;
-            player.raceData = {};
-            await player.save();
-
-            await i.update({
-                embeds: [new EmbedBuilder()
-                    .setColor(getColor(raceId))
-                    .setTitle(`${race.emoji} ${race.name} Seçildi!`)
-                    .setDescription(`**${race.name}** ırkını seçtin!\n**Pasif:** ${race.passive}\n\n` + race.desc)
-                    .setFooter({ text: '⚡ Kurayami RPG • Irk Sistemi' })],
-                components: []
-            });
-            collector.stop();
         });
 
         collector.on('end', () => {

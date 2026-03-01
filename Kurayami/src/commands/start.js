@@ -40,29 +40,44 @@ module.exports = {
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === message.author.id });
         collector.on('collect', async (i) => {
             if (i.customId !== 'start:create') return;
-            await Player.create({
-                discordId: message.author.id,
-                username: message.author.displayName,
-            });
-            await i.update({
-                embeds: [new EmbedBuilder()
-                    .setColor(0x2ecc71)
-                    .setTitle('✅ Karakter Oluşturuldu!')
-                    .setDescription(`**${message.author.displayName}** karakterin hazır!\n\nŞimdi \`+raceselect\` ile ırkını seç!`)
-                    .setFooter({ text: '⚡ Kurayami RPG' })],
-                components: []
-            });
+            try {
+                // Çift tıklama koruması
+                const alreadyExists = await Player.findOne({ where: { discordId: message.author.id } });
+                if (alreadyExists) {
+                    await i.update({
+                        embeds: [new EmbedBuilder().setColor(0xe74c3c).setDescription('❌ Zaten bir karakterin var!')],
+                        components: []
+                    });
+                    collector.stop();
+                    return;
+                }
+                await Player.create({
+                    discordId: message.author.id,
+                    username: message.author.displayName,
+                });
+                await i.update({
+                    embeds: [new EmbedBuilder()
+                        .setColor(0x2ecc71)
+                        .setTitle('✅ Karakter Oluşturuldu!')
+                        .setDescription(`**${message.author.displayName}** karakterin hazır!\n\nŞimdi \`+raceselect\` ile ırkını seç!`)
+                        .setFooter({ text: '⚡ Kurayami RPG' })],
+                    components: []
+                });
+            } catch (err) {
+                console.error('Start hatası:', err);
+                await i.reply({ content: '❌ Karakter oluşturulurken hata oluştu!', ephemeral: true }).catch(() => { });
+            }
             collector.stop();
         });
         collector.on('end', () => {
             battleSessions.unregister(msg.id);
-            msg.edit({ components: [] }).catch(() => {});
+            msg.edit({ components: [] }).catch(() => { });
         });
     },
 
     async handleInteraction(interaction) {
         if (interaction.customId !== 'start:create') return;
-        
+
         const existing = await Player.findOne({ where: { discordId: interaction.user.id } });
         if (existing) {
             await interaction.update({
@@ -71,7 +86,7 @@ module.exports = {
             });
             return;
         }
-        
+
         await Player.create({
             discordId: interaction.user.id,
             username: interaction.user.displayName,

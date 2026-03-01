@@ -219,43 +219,47 @@ module.exports = {
 
         collector.on('collect', async (btn) => {
             await btn.deferUpdate();
-            if (btn.customId === 'evolve:cancel') {
-                await msg.edit({ embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('❌ Evrim iptal edildi.')], components: [] });
-                return;
-            }
-
-            // Evrim gerçekleştir
-            player.raceEvolution = currentStage + 1;
-            player.raceForm = nextStage.name;
-            player.power += nextStage.bonuses.power;
-            player.defense += nextStage.bonuses.defense;
-            player.speed += nextStage.bonuses.speed;
-            player.maxHp += nextStage.bonuses.maxHp;
-            player.hp = Math.min(player.hp + nextStage.bonuses.maxHp, player.maxHp);
-
-            // Race item tüket (varsa)
-            if (req.raceItem) {
-                const ri = await InventoryItem.findOne({ where: { playerId: player.id, itemId: req.raceItem } });
-                if (ri) {
-                    if (ri.quantity > 1) { ri.quantity -= 1; await ri.save(); }
-                    else await ri.destroy();
+            try {
+                if (btn.customId === 'evolve:cancel') {
+                    await msg.edit({ embeds: [new EmbedBuilder().setColor(0x95a5a6).setDescription('❌ Evrim iptal edildi.')], components: [] });
+                    return;
                 }
+
+                // Evrim gerçekleştir
+                player.raceEvolution = currentStage + 1;
+                player.power += nextStage.bonuses.power;
+                player.defense += nextStage.bonuses.defense;
+                player.speed += nextStage.bonuses.speed;
+                player.maxHp += nextStage.bonuses.maxHp;
+                player.hp = Math.min(player.hp + nextStage.bonuses.maxHp, player.maxHp);
+
+                // Race item tüket (varsa)
+                if (req.raceItem) {
+                    const ri = await InventoryItem.findOne({ where: { playerId: player.id, itemId: req.raceItem } });
+                    if (ri) {
+                        if (ri.quantity > 1) { ri.quantity -= 1; await ri.save(); }
+                        else await ri.destroy();
+                    }
+                }
+
+                await player.save();
+
+                const successEmbed = new EmbedBuilder()
+                    .setColor(0xf1c40f)
+                    .setTitle(`🌟 EVRİM TAMAMLANDI!`)
+                    .setDescription(`**${message.author.displayName}** artık ${nextStage.emoji} **${nextStage.name}** formunda!`)
+                    .addFields(
+                        { name: '📊 Kazanılan Statlar', value: `+${nextStage.bonuses.power} PWR | +${nextStage.bonuses.defense} DEF | +${nextStage.bonuses.speed} SPD | +${nextStage.bonuses.maxHp} HP`, inline: false },
+                        { name: '⚡ Yeni Yetenekler', value: nextStage.skills.join(', '), inline: false },
+                        { name: '🔢 Evrim Seviyesi', value: `${player.raceEvolution}/${maxStage}`, inline: true }
+                    )
+                    .setFooter({ text: '⚡ Kurayami RPG • Evrim Sistemi' });
+
+                await msg.edit({ embeds: [successEmbed], components: [] });
+            } catch (err) {
+                console.error('Evolve hatası:', err);
+                await msg.edit({ embeds: [new EmbedBuilder().setColor(0xe74c3c).setDescription('❌ Evrim sırasında hata oluştu!')], components: [] }).catch(() => { });
             }
-
-            await player.save();
-
-            const successEmbed = new EmbedBuilder()
-                .setColor(0xf1c40f)
-                .setTitle(`🌟 EVRİM TAMAMLANDI!`)
-                .setDescription(`**${message.author.displayName}** artık ${nextStage.emoji} **${nextStage.name}** formunda!`)
-                .addFields(
-                    { name: '📊 Kazanılan Statlar', value: `+${nextStage.bonuses.power} PWR | +${nextStage.bonuses.defense} DEF | +${nextStage.bonuses.speed} SPD | +${nextStage.bonuses.maxHp} HP`, inline: false },
-                    { name: '⚡ Yeni Yetenekler', value: nextStage.skills.join(', '), inline: false },
-                    { name: '🔢 Evrim Seviyesi', value: `${player.raceEvolution}/${maxStage}`, inline: true }
-                )
-                .setFooter({ text: '⚡ Kurayami RPG • Evrim Sistemi' });
-
-            await msg.edit({ embeds: [successEmbed], components: [] });
         });
 
         collector.on('end', async (_, reason) => {
