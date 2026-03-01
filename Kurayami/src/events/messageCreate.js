@@ -56,8 +56,9 @@ module.exports = {
         try {
             await command.execute(message, args, client);
         } catch (err) {
-            console.error(`Komut hatası [${commandName}]:`, err);
-            message.reply('❌ Bir hata oluştu!').catch(() => { });
+            console.error(`❌ Komut hatası [${commandName}]:`, err.name, err.message);
+            console.error('Stack:', err.stack);
+            message.reply(`❌ Bir hata oluştu! (${err.name}: ${err.message?.slice(0, 100)})`).catch(() => { });
         }
     }
 };

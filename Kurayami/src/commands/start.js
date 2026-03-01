@@ -74,30 +74,4 @@ module.exports = {
             msg.edit({ components: [] }).catch(() => { });
         });
     },
-
-    async handleInteraction(interaction) {
-        if (interaction.customId !== 'start:create') return;
-
-        const existing = await Player.findOne({ where: { discordId: interaction.user.id } });
-        if (existing) {
-            await interaction.update({
-                embeds: [new EmbedBuilder().setColor(0xe74c3c).setDescription('❌ Zaten bir karakterin var! Profil için `+profile` kullan.')],
-                components: []
-            });
-            return;
-        }
-
-        await Player.create({
-            discordId: interaction.user.id,
-            username: interaction.user.displayName,
-        });
-        await interaction.update({
-            embeds: [new EmbedBuilder()
-                .setColor(0x2ecc71)
-                .setTitle('✅ Karakter Oluşturuldu!')
-                .setDescription(`**${interaction.user.displayName}** karakterin hazır!\n\nŞimdi \`+raceselect\` ile ırkını seç!`)
-                .setFooter({ text: '⚡ Kurayami RPG' })],
-            components: []
-        });
-    }
 };
